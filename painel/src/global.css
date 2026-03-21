@@ -1,0 +1,154 @@
+:root {
+  --bg-primary: #f7f6f3;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #eeecea;
+  --bg-card: #ffffff;
+  --text-primary: #1a1916;
+  --text-secondary: #6b6860;
+  --text-muted: #9b9890;
+  --accent: #e8521a;
+  --accent-light: #f97316;
+  --accent-muted: #fde8dc;
+  --accent-2: #1a5ce8;
+  --accent-2-muted: #dce8fd;
+  --success: #16a34a;
+  --success-muted: #dcfce7;
+  --warning: #ca8a04;
+  --warning-muted: #fef9c3;
+  --danger: #dc2626;
+  --danger-muted: #fee2e2;
+  --border: #e4e2de;
+  --border-strong: #ccc9c4;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.04);
+  --shadow-lg: 0 16px 40px rgba(0,0,0,0.10), 0 4px 12px rgba(0,0,0,0.06);
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --sidebar-width: 260px;
+  --header-height: 64px;
+  --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  --font-display: 'Syne', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+}
+
+[data-theme="dark"] {
+  --bg-primary: #111110;
+  --bg-secondary: #1a1916;
+  --bg-tertiary: #222220;
+  --bg-card: #1a1916;
+  --text-primary: #f5f4f0;
+  --text-secondary: #a8a59e;
+  --text-muted: #6b6860;
+  --accent: #f97316;
+  --accent-light: #fb923c;
+  --accent-muted: #2a1a0e;
+  --accent-2: #3b82f6;
+  --accent-2-muted: #0e1a2a;
+  --success: #22c55e;
+  --success-muted: #0e2a1a;
+  --warning: #eab308;
+  --warning-muted: #1a1a0e;
+  --danger: #ef4444;
+  --danger-muted: #2a0e0e;
+  --border: #2a2926;
+  --border-strong: #3a3835;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.4);
+  --shadow-lg: 0 16px 40px rgba(0,0,0,0.5);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background var(--transition-slow), color var(--transition-slow);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+button {
+  font-family: var(--font-body);
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+input, textarea, select {
+  font-family: var(--font-body);
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 99px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInLeft {
+  from { opacity: 0; transform: translateX(-20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes fadeInScale {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(30px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
