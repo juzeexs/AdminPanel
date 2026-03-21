@@ -1,7 +1,9 @@
-import { useState, useEffect, useRef } from “react”;
-import { Chart, registerables } from “chart.js”;
+import { useState } from “react”;
+import {
+ComposedChart, Bar, Line, XAxis, YAxis, Tooltip,
+ResponsiveContainer, PieChart, Pie, Cell, CartesianGrid,
+} from “recharts”;
 import “./App.css”;
-Chart.register(…registerables);
 
 const DATA = {
 “7d”: {
@@ -11,9 +13,15 @@ metrics: [
 { label: “Taxa de conversão”, value: “4,7%”,       delta: “-0,3%”,  up: false },
 { label: “Ticket médio”,      value: “R$ 154”,     delta: “+5,2%”,  up: true  },
 ],
-revenue: [6200, 7400, 5800, 8100, 7200, 6900, 6600],
-target:  [6000, 7000, 7000, 7500, 7000, 7000, 7000],
-labels:  [“Seg”,“Ter”,“Qua”,“Qui”,“Sex”,“Sáb”,“Dom”],
+chart: [
+{ label: “Seg”, revenue: 6200, target: 6000 },
+{ label: “Ter”, revenue: 7400, target: 7000 },
+{ label: “Qua”, revenue: 5800, target: 7000 },
+{ label: “Qui”, revenue: 8100, target: 7500 },
+{ label: “Sex”, revenue: 7200, target: 7000 },
+{ label: “Sáb”, revenue: 6900, target: 7000 },
+{ label: “Dom”, revenue: 6600, target: 7000 },
+],
 },
 “30d”: {
 metrics: [
@@ -22,9 +30,20 @@ metrics: [
 { label: “Taxa de conversão”, value: “5,1%”,       delta: “+0,6%”,  up: true },
 { label: “Ticket médio”,      value: “R$ 149”,     delta: “+3,8%”,  up: true },
 ],
-revenue: [38000,42000,31000,52000,44000,48000,55000,43000,61000,57000,49000,66000],
-target:  [40000,40000,40000,50000,50000,50000,55000,55000,55000,60000,60000,60000],
-labels:  [“1”,“4”,“7”,“10”,“13”,“16”,“19”,“22”,“25”,“27”,“28”,“30”],
+chart: [
+{ label: “1”,  revenue: 38000, target: 40000 },
+{ label: “4”,  revenue: 42000, target: 40000 },
+{ label: “7”,  revenue: 31000, target: 40000 },
+{ label: “10”, revenue: 52000, target: 50000 },
+{ label: “13”, revenue: 44000, target: 50000 },
+{ label: “16”, revenue: 48000, target: 50000 },
+{ label: “19”, revenue: 55000, target: 55000 },
+{ label: “22”, revenue: 43000, target: 55000 },
+{ label: “25”, revenue: 61000, target: 55000 },
+{ label: “27”, revenue: 57000, target: 60000 },
+{ label: “28”, revenue: 49000, target: 60000 },
+{ label: “30”, revenue: 66000, target: 60000 },
+],
 },
 “90d”: {
 metrics: [
@@ -33,11 +52,29 @@ metrics: [
 { label: “Taxa de conversão”, value: “5,4%”,       delta: “+1,1%”,  up: true  },
 { label: “Ticket médio”,      value: “R$ 132”,     delta: “-2,1%”,  up: false },
 ],
-revenue: [120000,138000,155000,162000,175000,185000,195000,205000,215000,230000,242000,256000],
-target:  [130000,140000,150000,160000,170000,180000,190000,200000,210000,220000,230000,240000],
-labels:  [“Jan”,””,””,“Fev”,””,””,“Mar”,””,””,“Abr”,””,””],
+chart: [
+{ label: “Jan”, revenue: 120000, target: 130000 },
+{ label: “”,    revenue: 138000, target: 140000 },
+{ label: “”,    revenue: 155000, target: 150000 },
+{ label: “Fev”, revenue: 162000, target: 160000 },
+{ label: “”,    revenue: 175000, target: 170000 },
+{ label: “”,    revenue: 185000, target: 180000 },
+{ label: “Mar”, revenue: 195000, target: 190000 },
+{ label: “”,    revenue: 205000, target: 200000 },
+{ label: “”,    revenue: 215000, target: 210000 },
+{ label: “Abr”, revenue: 230000, target: 220000 },
+{ label: “”,    revenue: 242000, target: 230000 },
+{ label: “”,    revenue: 256000, target: 240000 },
+],
 },
 };
+
+const DONUT_DATA = [
+{ name: “Eletrônicos”, value: 38, color: “#378ADD” },
+{ name: “Moda”,        value: 27, color: “#1D9E75” },
+{ name: “Casa”,        value: 21, color: “#D85A30” },
+{ name: “Esporte”,     value: 14, color: “#BA7517” },
+];
 
 const ORDERS = [
 { name: “Ana Souza”,     value: “R$ 1.240”, status: “Pago”,     cls: “ok”   },
@@ -55,6 +92,22 @@ const CHANNELS = [
 { name: “Direto”,   pct:  4, color: “#888780” },
 ];
 
+const fmtY = (v) => “R$” + (v >= 1000 ? (v / 1000).toFixed(0) + “k” : v);
+
+const CustomTooltip = ({ active, payload, label }) => {
+if (!active || !payload?.length) return null;
+return (
+<div style={{ background: “#fff”, border: “0.5px solid #e5e4de”, borderRadius: 8, padding: “8px 12px”, fontSize: 12 }}>
+<p style={{ color: “#888780”, marginBottom: 4 }}>{label}</p>
+{payload.map((p) => (
+<p key={p.name} style={{ color: p.color ?? p.stroke, margin: “2px 0” }}>
+{p.name}: {typeof p.value === “number” && p.value >= 1000 ? fmtY(p.value) : p.value}
+</p>
+))}
+</div>
+);
+};
+
 function MetricCard({ label, value, delta, up }) {
 return (
 <div className="metric-card">
@@ -67,98 +120,51 @@ return (
 );
 }
 
-// ✅ CORREÇÃO: sempre destrói e recria o chart — seguro com StrictMode
-function RevenueChart({ period }) {
-const canvasRef = useRef(null);
-const chartRef  = useRef(null);
-
-useEffect(() => {
-if (chartRef.current) {
-chartRef.current.destroy();
-chartRef.current = null;
+function RevenueChart({ data }) {
+return (
+<div className="chart-wrap">
+<ResponsiveContainer width="100%" height="100%">
+<ComposedChart data={data} margin={{ top: 4, right: 4, left: -10, bottom: 0 }}>
+<CartesianGrid vertical={false} stroke="rgba(136,135,128,0.15)" />
+<XAxis dataKey=“label” tick={{ fontSize: 10, fill: “#888780” }} axisLine={false} tickLine={false} />
+<YAxis tickFormatter={fmtY} tick={{ fontSize: 10, fill: “#888780” }} axisLine={false} tickLine={false} />
+<Tooltip content={<CustomTooltip />} />
+<Bar dataKey=“revenue” name=“Receita” fill=”#378ADD” radius={[4, 4, 0, 0]} />
+<Line dataKey="target" name="Meta" type="monotone" stroke="#1D9E75" strokeWidth={2} dot={false} />
+</ComposedChart>
+</ResponsiveContainer>
+</div>
+);
 }
 
-```
-const d = DATA[period];
-chartRef.current = new Chart(canvasRef.current, {
-  type: "bar",
-  data: {
-    labels: d.labels,
-    datasets: [
-      { label: "Receita", data: d.revenue, backgroundColor: "#378ADD", borderRadius: 4, borderSkipped: false, order: 2 },
-      { label: "Meta", data: d.target, type: "line", borderColor: "#1D9E75", backgroundColor: "transparent", borderWidth: 2, pointRadius: 0, tension: 0.4, order: 1 },
-    ],
-  },
-  options: {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: { legend: { display: false } },
-    scales: {
-      x: { grid: { display: false }, ticks: { font: { size: 10 }, color: "#888780", maxRotation: 0 } },
-      y: {
-        grid: { color: "rgba(136,135,128,0.15)" },
-        ticks: { font: { size: 10 }, color: "#888780", callback: (v) => "R$" + (v >= 1000 ? (v/1000).toFixed(0) + "k" : v) },
-      },
-    },
-  },
-});
-
-return () => {
-  if (chartRef.current) {
-    chartRef.current.destroy();
-    chartRef.current = null;
-  }
-};
-```
-
-}, [period]);
-
-return <div className="chart-wrap"><canvas ref={canvasRef} /></div>;
-}
-
-// ✅ CORREÇÃO: mesmo padrão aplicado no DonutChart
 function DonutChart() {
-const canvasRef = useRef(null);
-const chartRef  = useRef(null);
-
-useEffect(() => {
-if (chartRef.current) {
-chartRef.current.destroy();
-chartRef.current = null;
-}
-
-```
-chartRef.current = new Chart(canvasRef.current, {
-  type: "doughnut",
-  data: {
-    labels: ["Eletrônicos","Moda","Casa","Esporte"],
-    datasets: [{ data: [38,27,21,14], backgroundColor: ["#378ADD","#1D9E75","#D85A30","#BA7517"], borderWidth: 0, hoverOffset: 6 }],
-  },
-  options: {
-    responsive: true, maintainAspectRatio: false, cutout: "65%",
-    plugins: {
-      legend: { display: false },
-      tooltip: { callbacks: { label: (ctx) => " " + ctx.label + ": " + ctx.parsed + "%" } },
-    },
-  },
-});
-
-return () => {
-  if (chartRef.current) {
-    chartRef.current.destroy();
-    chartRef.current = null;
-  }
-};
-```
-
-}, []);
-
-return <div className="chart-wrap"><canvas ref={canvasRef} /></div>;
+return (
+<div className="chart-wrap">
+<ResponsiveContainer width="100%" height="100%">
+<PieChart>
+<Pie
+data={DONUT_DATA}
+cx="50%"
+cy="50%"
+innerRadius="55%"
+outerRadius="80%"
+dataKey="value"
+paddingAngle={2}
+>
+{DONUT_DATA.map((entry) => (
+<Cell key={entry.name} fill={entry.color} />
+))}
+</Pie>
+<Tooltip formatter={(v) => v + “%”} />
+</PieChart>
+</ResponsiveContainer>
+</div>
+);
 }
 
 export default function App() {
 const [period, setPeriod] = useState(“30d”);
-const metrics = DATA[period].metrics;
+const { metrics, chart } = DATA[period];
 
 return (
 <div className="dash">
@@ -172,8 +178,14 @@ return (
     <div className="dash-controls">
       <span className="badge-live">Ao vivo</span>
       <div className="period-btns">
-        {["7d","30d","90d"].map((p) => (
-          <button key={p} className={`period-btn ${period === p ? "active" : ""}`} onClick={() => setPeriod(p)}>{p}</button>
+        {["7d", "30d", "90d"].map((p) => (
+          <button
+            key={p}
+            className={`period-btn ${period === p ? "active" : ""}`}
+            onClick={() => setPeriod(p)}
+          >
+            {p}
+          </button>
         ))}
       </div>
     </div>
@@ -190,15 +202,15 @@ return (
         <span className="legend-item"><span className="legend-dot" style={{ background: "#378ADD" }} />Receita</span>
         <span className="legend-item"><span className="legend-dot" style={{ background: "#1D9E75" }} />Meta</span>
       </div>
-      <RevenueChart period={period} />
+      <RevenueChart data={chart} />
     </div>
     <div className="card">
       <div className="card-title">Categorias</div>
       <DonutChart />
       <div className="donut-legend">
-        {[["Eletrônicos","#378ADD","38%"],["Moda","#1D9E75","27%"],["Casa","#D85A30","21%"],["Esporte","#BA7517","14%"]].map(([name, color, pct]) => (
+        {DONUT_DATA.map(({ name, color, value }) => (
           <span key={name} className="legend-item">
-            <span className="legend-dot" style={{ background: color }} />{name} {pct}
+            <span className="legend-dot" style={{ background: color }} />{name} {value}%
           </span>
         ))}
       </div>
