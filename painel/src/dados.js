@@ -30,4 +30,4 @@ export const dadosTabela = [
   { id: '10418', cliente: 'Diego Farias',   produto: 'Monitor 4K',      valor: 2100, status: 'Pago',      data: '17/03/2025' },
   { id: '10417', cliente: 'Fernanda Costa', produto: 'Teclado Mec.',    valor: 420,  status: 'Cancelado', data: '16/03/2025' },
   { id: '10416', cliente: 'Gustavo Neto',   produto: 'Headset Pro',     valor: 350,  status: 'Enviado',   data: '15/03/2025' },
-];
+]; 
