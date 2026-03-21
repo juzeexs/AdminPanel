@@ -1,4 +1,4 @@
-# 📊 LiteAdmin - Dashboard Profissional
+# 📊 LiteAdmin - Dashboard
 
 **LiteAdmin** é um painel administrativo moderno, performático e totalmente responsivo. Focado em uma experiência de usuário (UX) fluida, o projeto apresenta uma interface limpa com suporte a **Dark Mode**, gráficos interativos e gerenciamento dinâmico de dados.
 
