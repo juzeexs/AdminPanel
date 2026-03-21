@@ -5,156 +5,156 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>AdminPanel</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 <style>
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
-
-/* ─── TOKENS ─────────────────────────────────── */
+/* ── TOKENS ─────────────────────────────────── */
 :root {
-  --r: 10px;
-  --gap: 20px;
-  --sidebar-w: 220px;
-  --topbar-h: 60px;
-  --font: 'DM Sans', sans-serif;
-  --mono: 'DM Mono', monospace;
-  --transition: 0.18s ease;
-}
+  --f: 'Geist', sans-serif;
+  --r: 8px;
+  --sidebar: 240px;
+  --topbar: 56px;
 
-/* LIGHT */
-[data-theme="light"] {
-  --bg:       #f5f5f7;
-  --surface:  #ffffff;
-  --surface2: #f0f0f3;
-  --border:   #e8e8ec;
-  --text:     #111114;
-  --muted:    #8a8a9a;
-  --accent:   #1a1a2e;
-  --acc-fg:   #ffffff;
-  --acc-subtle: rgba(26,26,46,0.07);
-  --shadow:   0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.04);
+  --bg:      #f9f9fb;
+  --surface: #ffffff;
+  --border:  #e4e4e9;
+  --text:    #0f0f12;
+  --sub:     #6b6b7b;
+  --accent:  #2563eb;
+  --acc-dim: #eff4ff;
+
   --green: #16a34a; --green-bg: #f0fdf4;
   --red:   #dc2626; --red-bg:   #fef2f2;
-  --blue:  #2563eb; --blue-bg:  #eff6ff;
   --amber: #d97706; --amber-bg: #fffbeb;
+  --blue:  #2563eb; --blue-bg:  #eff6ff;
+
+  --shadow: 0 1px 2px rgba(0,0,0,.05), 0 4px 12px rgba(0,0,0,.04);
+  --trans: .15s ease;
 }
 
-/* DARK */
 [data-theme="dark"] {
-  --bg:       #0d0d10;
-  --surface:  #16161a;
-  --surface2: #1e1e24;
-  --border:   #2a2a35;
-  --text:     #ededf0;
-  --muted:    #6b6b80;
-  --accent:   #e8e8f0;
-  --acc-fg:   #111114;
-  --acc-subtle: rgba(232,232,240,0.06);
-  --shadow:   0 1px 3px rgba(0,0,0,0.3), 0 4px 12px rgba(0,0,0,0.2);
+  --bg:      #0a0a0d;
+  --surface: #111116;
+  --border:  #232329;
+  --text:    #f0f0f4;
+  --sub:     #666672;
+  --accent:  #3b82f6;
+  --acc-dim: #1e293b;
+
   --green: #4ade80; --green-bg: #052e16;
   --red:   #f87171; --red-bg:   #2a0a0a;
+  --amber: #fbbf24; --amber-bg: #2a1500;
   --blue:  #60a5fa; --blue-bg:  #0c1d3a;
-  --amber: #fbbf24; --amber-bg: #2d1a00;
 }
 
-/* ─── RESET ──────────────────────────────────── */
+/* ── RESET ──────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { font-size: 14px; }
 body {
-  font-family: var(--font);
+  font-family: var(--f);
   background: var(--bg);
   color: var(--text);
-  min-height: 100vh;
-  display: flex;
-  transition: background var(--transition), color var(--transition);
-  overflow: hidden;
+  min-height: 100dvh;
+  transition: background var(--trans), color var(--trans);
 }
-button { font-family: var(--font); cursor: pointer; border: none; background: none; }
-a { text-decoration: none; color: inherit; }
-input, select, textarea { font-family: var(--font); }
+button { font-family: var(--f); cursor: pointer; border: none; background: none; }
+input, select, textarea { font-family: var(--f); }
 
-/* ─── LAYOUT ─────────────────────────────────── */
+/* ── LAYOUT ─────────────────────────────────── */
+#layout {
+  display: grid;
+  grid-template-columns: var(--sidebar) 1fr;
+  grid-template-rows: var(--topbar) 1fr;
+  grid-template-areas: "side top" "side main";
+  height: 100dvh;
+}
+
 #sidebar {
-  width: var(--sidebar-w);
-  min-width: var(--sidebar-w);
-  height: 100vh;
+  grid-area: side;
   background: var(--surface);
   border-right: 1px solid var(--border);
   display: flex;
   flex-direction: column;
-  position: fixed;
-  left: 0; top: 0;
-  z-index: 300;
-  transition: transform var(--transition), background var(--transition), border-color var(--transition);
   overflow-y: auto;
+  z-index: 200;
+  transition: transform var(--trans), background var(--trans);
 }
 
-#app {
-  margin-left: var(--sidebar-w);
-  flex: 1;
+#topbar {
+  grid-area: top;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
   display: flex;
-  flex-direction: column;
-  height: 100vh;
-  overflow: hidden;
-  transition: margin var(--transition);
+  align-items: center;
+  padding: 0 20px;
+  gap: 12px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
-/* ─── SIDEBAR ─────────────────────────────────── */
-.s-logo {
+#main {
+  grid-area: main;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* ── SIDEBAR INTERNALS ──────────────────────── */
+.logo {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 22px 20px 18px;
+  padding: 16px 16px 14px;
   border-bottom: 1px solid var(--border);
+  font-weight: 700;
+  font-size: 15px;
 }
-.s-logo-mark {
-  width: 32px; height: 32px;
+.logo-icon {
+  width: 28px; height: 28px;
   background: var(--text);
-  border-radius: 8px;
-  display: grid; place-items: center;
   color: var(--bg);
-  font-size: 16px;
+  border-radius: 6px;
+  display: grid;
+  place-items: center;
+  font-size: 14px;
   flex-shrink: 0;
 }
-.s-logo-text { font-weight: 700; font-size: 15px; letter-spacing: -0.3px; }
-.s-logo-badge {
+.logo-version {
   margin-left: auto;
-  font-size: 9px;
-  background: var(--acc-subtle);
-  color: var(--muted);
+  font-size: 10px;
+  color: var(--sub);
+  font-weight: 500;
+  background: var(--border);
+  padding: 2px 6px;
   border-radius: 4px;
-  padding: 2px 5px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
 }
 
-.s-section-label {
+nav { flex: 1; padding: 8px; }
+
+.nav-section {
   font-size: 10px;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.8px;
-  color: var(--muted);
-  padding: 16px 20px 6px;
+  letter-spacing: .7px;
+  color: var(--sub);
+  padding: 12px 8px 4px;
 }
-
-nav { flex: 1; padding: 8px 10px; }
 
 .nav-item {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 9px 12px;
+  gap: 9px;
+  padding: 8px 10px;
   border-radius: var(--r);
-  color: var(--muted);
+  color: var(--sub);
   font-size: 13.5px;
   font-weight: 500;
-  cursor: pointer;
-  transition: all var(--transition);
-  user-select: none;
   width: 100%;
+  transition: all var(--trans);
 }
-.nav-item:hover { color: var(--text); background: var(--acc-subtle); }
-.nav-item.active { color: var(--text); background: var(--acc-subtle); font-weight: 600; }
-.nav-item .icon { font-size: 15px; flex-shrink: 0; width: 18px; text-align: center; }
+.nav-item:hover { color: var(--text); background: var(--acc-dim); }
+.nav-item.active { color: var(--accent); background: var(--acc-dim); font-weight: 600; }
+.nav-icon { width: 18px; text-align: center; font-size: 15px; }
 .nav-badge {
   margin-left: auto;
   background: var(--text);
@@ -162,1328 +162,979 @@ nav { flex: 1; padding: 8px 10px; }
   font-size: 10px;
   font-weight: 700;
   border-radius: 20px;
-  padding: 1px 7px;
-  font-family: var(--mono);
+  padding: 1px 6px;
+  min-width: 18px;
+  text-align: center;
 }
 
-.s-footer {
-  padding: 14px 14px;
+.sidebar-footer {
+  padding: 12px;
   border-top: 1px solid var(--border);
 }
-.s-user {
+.user-card {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 8px 10px;
+  padding: 8px;
   border-radius: var(--r);
   cursor: pointer;
-  transition: background var(--transition);
+  transition: background var(--trans);
 }
-.s-user:hover { background: var(--acc-subtle); }
+.user-card:hover { background: var(--acc-dim); }
 .avatar {
-  width: 32px; height: 32px;
+  width: 30px; height: 30px;
   border-radius: 50%;
   background: var(--text);
   color: var(--bg);
-  display: grid; place-items: center;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
+  display: grid;
+  place-items: center;
   flex-shrink: 0;
 }
-.s-user-info { min-width: 0; }
-.s-user-name { font-size: 13px; font-weight: 600; color: var(--text); }
-.s-user-role { font-size: 11px; color: var(--muted); }
+.user-name { font-size: 13px; font-weight: 600; }
+.user-role { font-size: 11px; color: var(--sub); }
 
-/* ─── TOPBAR ──────────────────────────────────── */
-#topbar {
-  height: var(--topbar-h);
-  min-height: var(--topbar-h);
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
+/* ── TOPBAR INTERNALS ───────────────────────── */
+.menu-btn {
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px;
+  border-radius: var(--r);
+  transition: background var(--trans);
+}
+.menu-btn:hover { background: var(--acc-dim); }
+.menu-btn span { display: block; width: 16px; height: 1.5px; background: var(--text); border-radius: 2px; }
+
+.page-title { font-size: 15px; font-weight: 600; flex: 1; }
+
+.search-box {
   display: flex;
   align-items: center;
-  padding: 0 24px;
-  gap: 16px;
-  position: sticky; top: 0; z-index: 100;
-  transition: background var(--transition), border-color var(--transition);
-}
-
-.topbar-page-title {
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--text);
-  flex: 1;
-}
-
-.topbar-search {
-  display: flex;
-  align-items: center;
-  background: var(--surface2);
+  gap: 8px;
+  background: var(--bg);
   border: 1px solid var(--border);
   border-radius: var(--r);
   padding: 0 12px;
-  gap: 8px;
-  height: 36px;
-  transition: border-color var(--transition);
+  height: 34px;
+  transition: border-color var(--trans);
 }
-.topbar-search:focus-within { border-color: var(--text); }
-.topbar-search input {
+.search-box:focus-within { border-color: var(--accent); }
+.search-box input {
   background: none; border: none; outline: none;
-  color: var(--text); font-size: 13px;
-  width: 180px;
+  color: var(--text); font-size: 13px; width: 180px;
 }
-.topbar-search input::placeholder { color: var(--muted); }
-.topbar-search .search-icon { color: var(--muted); font-size: 14px; }
+.search-box input::placeholder { color: var(--sub); }
 
-.topbar-actions { display: flex; align-items: center; gap: 8px; }
+.topbar-actions { display: flex; gap: 6px; }
 
 .icon-btn {
-  width: 36px; height: 36px;
+  width: 34px; height: 34px;
   border-radius: var(--r);
   display: grid; place-items: center;
-  font-size: 16px;
-  color: var(--muted);
-  transition: all var(--transition);
+  font-size: 15px;
+  color: var(--sub);
   position: relative;
+  transition: all var(--trans);
 }
-.icon-btn:hover { background: var(--acc-subtle); color: var(--text); }
-.icon-btn .dot {
+.icon-btn:hover { background: var(--acc-dim); color: var(--text); }
+.notif-dot {
   position: absolute;
-  top: 7px; right: 7px;
+  top: 6px; right: 6px;
   width: 7px; height: 7px;
   background: var(--red);
   border-radius: 50%;
   border: 2px solid var(--surface);
 }
 
-.menu-btn {
-  display: none;
-  width: 36px; height: 36px;
-  border-radius: var(--r);
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 5px;
-  color: var(--muted);
-  transition: background var(--transition);
-}
-.menu-btn:hover { background: var(--acc-subtle); }
-.menu-btn span { display: block; width: 18px; height: 1.5px; background: var(--text); border-radius: 2px; }
-
-/* ─── MAIN CONTENT ────────────────────────────── */
-#main {
-  flex: 1;
-  overflow-y: auto;
-  overflow-x: hidden;
-}
-
-.page { display: none; padding: var(--gap) 24px 40px; animation: fadeIn 0.2s ease; }
+/* ── PAGES ──────────────────────────────────── */
+.page { display: none; padding: 20px; animation: fadeUp .2s ease; }
 .page.active { display: block; }
 
-@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
-
-/* ─── TYPOGRAPHY ─────────────────────────────── */
-.page-header { margin-bottom: 24px; }
-.page-header h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.4px; color: var(--text); }
-.page-header p { font-size: 13px; color: var(--muted); margin-top: 3px; }
-
-h2.section-title {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 0.6px;
-  margin-bottom: 12px;
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(5px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ─── CARD ───────────────────────────────────── */
+.page-hdr {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.page-hdr h1 { font-size: 20px; font-weight: 700; letter-spacing: -.3px; }
+.page-hdr p  { font-size: 13px; color: var(--sub); margin-top: 2px; }
+
+/* ── CARD ────────────────────────────────────── */
 .card {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--r);
-  padding: 20px;
-  transition: background var(--transition), border-color var(--transition);
+  padding: 18px;
+  box-shadow: var(--shadow);
 }
-
-/* ─── STAT CARDS ─────────────────────────────── */
-.stat-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: var(--gap);
-  margin-bottom: var(--gap);
-}
-.stat-card { display: flex; flex-direction: column; gap: 12px; }
-.stat-top { display: flex; align-items: center; justify-content: space-between; }
-.stat-label { font-size: 12.5px; font-weight: 500; color: var(--muted); }
-.stat-icon { font-size: 16px; }
-.stat-value { font-size: 26px; font-weight: 700; letter-spacing: -0.8px; color: var(--text); font-variant-numeric: tabular-nums; }
-.stat-sub { font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 4px; }
-.stat-sub .up { color: var(--green); }
-.stat-sub .dn { color: var(--red); }
-
-/* ─── TWO COL ─────────────────────────────────── */
-.two-col { display: grid; grid-template-columns: 2fr 1fr; gap: var(--gap); margin-bottom: var(--gap); }
-.three-col { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--gap); margin-bottom: var(--gap); }
-
-.card-header {
+.card-hdr {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 18px;
+  margin-bottom: 16px;
 }
-.card-title { font-size: 14px; font-weight: 600; color: var(--text); }
-.card-sub-title { font-size: 12px; color: var(--muted); margin-top: 2px; }
-.card-action {
-  font-size: 12px;
-  color: var(--muted);
+.card-title { font-size: 14px; font-weight: 600; }
+.card-sub   { font-size: 12px; color: var(--sub); margin-top: 2px; }
+.card-link  {
+  font-size: 12px; color: var(--sub); font-weight: 500;
   padding: 5px 10px;
   border: 1px solid var(--border);
   border-radius: 6px;
-  cursor: pointer;
-  transition: all var(--transition);
-  font-weight: 500;
+  transition: all var(--trans);
 }
-.card-action:hover { color: var(--text); border-color: var(--text); }
+.card-link:hover { color: var(--text); border-color: var(--text); }
 
-/* ─── CHART CANVAS ────────────────────────────── */
-.chart-wrap { position: relative; }
+/* ── GRIDS ───────────────────────────────────── */
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 16px; }
+.grid-2 { display: grid; grid-template-columns: 2fr 1fr;        gap: 16px; margin-bottom: 16px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 16px; }
+.grid-2-eq { display: grid; grid-template-columns: 1fr 1fr;     gap: 16px; margin-bottom: 16px; }
 
-/* ─── TABLE ──────────────────────────────────── */
-.table-scroll { overflow-x: auto; margin: 0 -20px; }
+/* ── STAT CARD ───────────────────────────────── */
+.stat { display: flex; flex-direction: column; gap: 10px; }
+.stat-row { display: flex; align-items: center; justify-content: space-between; }
+.stat-label { font-size: 12px; font-weight: 500; color: var(--sub); }
+.stat-icon  { font-size: 16px; }
+.stat-value { font-size: 24px; font-weight: 700; letter-spacing: -.6px; }
+.stat-delta { font-size: 12px; color: var(--sub); display: flex; gap: 4px; align-items: center; }
+.up { color: var(--green); }
+.dn { color: var(--red); }
+
+/* ── BADGE ───────────────────────────────────── */
+.badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 2px 8px; border-radius: 20px;
+  font-size: 11.5px; font-weight: 600;
+}
+.badge::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+.badge-green { color: var(--green); background: var(--green-bg); }
+.badge-red   { color: var(--red);   background: var(--red-bg);   }
+.badge-blue  { color: var(--blue);  background: var(--blue-bg);  }
+.badge-amber { color: var(--amber); background: var(--amber-bg); }
+
+/* ── TABLE ───────────────────────────────────── */
+.tbl-wrap  { overflow-x: auto; margin: 0 -18px; }
 .data-table { width: 100%; border-collapse: collapse; }
 .data-table th {
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: var(--muted);
-  padding: 8px 20px;
-  text-align: left;
-  border-bottom: 1px solid var(--border);
+  padding: 8px 18px; text-align: left;
+  font-size: 11px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: .5px;
+  color: var(--sub); border-bottom: 1px solid var(--border);
   white-space: nowrap;
 }
 .data-table td {
-  padding: 12px 20px;
-  font-size: 13.5px;
-  color: var(--text);
+  padding: 11px 18px; font-size: 13px;
   border-bottom: 1px solid var(--border);
-  white-space: nowrap;
+  color: var(--text); white-space: nowrap;
 }
 .data-table tr:last-child td { border-bottom: none; }
-.data-table tbody tr { transition: background var(--transition); }
-.data-table tbody tr:hover { background: var(--acc-subtle); }
+.data-table tbody tr:hover   { background: var(--acc-dim); }
 
-/* ─── BADGE ──────────────────────────────────── */
-.badge {
-  display: inline-flex; align-items: center; gap: 5px;
-  padding: 3px 9px;
-  border-radius: 20px;
-  font-size: 11.5px;
-  font-weight: 600;
-}
-.badge::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
-.badge-green  { color: var(--green); background: var(--green-bg); }
-.badge-red    { color: var(--red);   background: var(--red-bg);   }
-.badge-blue   { color: var(--blue);  background: var(--blue-bg);  }
-.badge-amber  { color: var(--amber); background: var(--amber-bg); }
-
-/* ─── PROGRESS ────────────────────────────────── */
-.progress-list { display: flex; flex-direction: column; gap: 16px; }
-.progress-item {}
-.progress-header { display: flex; justify-content: space-between; margin-bottom: 6px; }
-.progress-label { font-size: 13px; font-weight: 500; color: var(--text); }
-.progress-value { font-size: 12px; color: var(--muted); font-family: var(--mono); }
-.progress-bar { height: 5px; background: var(--border); border-radius: 3px; overflow: hidden; }
-.progress-fill { height: 100%; border-radius: 3px; background: var(--text); transition: width 0.6s ease; }
-
-/* ─── KPI ROW ─────────────────────────────────── */
-.kpi-row { display: flex; flex-direction: column; gap: 12px; }
-.kpi-item { display: flex; align-items: center; gap: 12px; }
-.kpi-icon {
-  width: 36px; height: 36px;
-  border-radius: 9px;
-  background: var(--acc-subtle);
-  display: grid; place-items: center;
-  font-size: 16px;
-  flex-shrink: 0;
-}
-.kpi-info { flex: 1; min-width: 0; }
-.kpi-name { font-size: 13px; font-weight: 500; color: var(--text); }
-.kpi-detail { font-size: 11.5px; color: var(--muted); }
-.kpi-num { font-size: 14px; font-weight: 700; color: var(--text); font-family: var(--mono); }
-
-/* ─── ACTIVITY ────────────────────────────────── */
-.activity-list { display: flex; flex-direction: column; }
-.activity-item {
-  display: flex; align-items: flex-start; gap: 12px;
-  padding: 12px 0;
-  border-bottom: 1px solid var(--border);
-}
-.activity-item:last-child { border-bottom: none; }
-.activity-dot {
-  width: 8px; height: 8px;
-  border-radius: 50%;
-  background: var(--text);
-  margin-top: 4px;
-  flex-shrink: 0;
-}
-.activity-body { flex: 1; min-width: 0; }
-.activity-text { font-size: 13px; color: var(--text); line-height: 1.4; }
-.activity-time { font-size: 11.5px; color: var(--muted); margin-top: 2px; }
-
-/* ─── BUTTONS ─────────────────────────────────── */
+/* ── BUTTONS ─────────────────────────────────── */
 .btn {
-  display: inline-flex; align-items: center; gap: 7px;
-  padding: 8px 16px;
-  border-radius: var(--r);
-  font-size: 13px;
-  font-weight: 600;
-  transition: all var(--transition);
-  cursor: pointer;
-  border: 1px solid transparent;
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 14px; border-radius: var(--r);
+  font-size: 13px; font-weight: 600;
+  transition: all var(--trans); border: 1px solid transparent;
 }
-.btn-primary { background: var(--text); color: var(--bg); }
-.btn-primary:hover { opacity: 0.85; }
-.btn-ghost { background: none; color: var(--muted); border-color: var(--border); }
-.btn-ghost:hover { color: var(--text); border-color: var(--text); background: var(--acc-subtle); }
-.btn-danger { background: var(--red-bg); color: var(--red); border-color: transparent; }
-.btn-danger:hover { opacity: 0.8; }
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-primary:hover { opacity: .88; }
+.btn-ghost   { background: none; color: var(--sub); border-color: var(--border); }
+.btn-ghost:hover { color: var(--text); border-color: var(--text); }
+.btn-danger  { background: var(--red-bg); color: var(--red); }
+.btn-danger:hover { opacity: .8; }
+.btn-sm { padding: 4px 10px; font-size: 12px; }
 
-/* ─── FORM ───────────────────────────────────── */
-.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-.form-full { grid-column: 1 / -1; }
-.form-group { display: flex; flex-direction: column; gap: 6px; }
-.form-label { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.4px; }
-.form-input {
-  padding: 9px 12px;
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: var(--r);
-  color: var(--text);
-  font-size: 13.5px;
-  outline: none;
-  transition: border-color var(--transition);
-  width: 100%;
+/* ── FILTERS ─────────────────────────────────── */
+.filters { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+.filter-btn {
+  padding: 5px 12px; border-radius: 20px;
+  font-size: 12.5px; font-weight: 600;
+  border: 1px solid var(--border); color: var(--sub);
+  transition: all var(--trans);
 }
-.form-input:focus { border-color: var(--text); }
-.form-input::placeholder { color: var(--muted); }
-select.form-input { cursor: pointer; }
-.form-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 6px; }
+.filter-btn:hover  { color: var(--text); border-color: var(--text); }
+.filter-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
 
-/* ─── TOGGLE ─────────────────────────────────── */
+/* ── PROGRESS ────────────────────────────────── */
+.prog-list { display: flex; flex-direction: column; gap: 14px; margin-top: 16px; }
+.prog-item {}
+.prog-row { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 12.5px; }
+.prog-row span:last-child { color: var(--sub); }
+.prog-track { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+.prog-fill  { height: 100%; background: var(--accent); border-radius: 2px; }
+
+/* ── KPI ─────────────────────────────────────── */
+.kpi-list { display: flex; flex-direction: column; gap: 10px; }
+.kpi-item { display: flex; align-items: center; gap: 12px; }
+.kpi-icon { width: 34px; height: 34px; background: var(--acc-dim); border-radius: 8px; display: grid; place-items: center; font-size: 15px; flex-shrink: 0; }
+.kpi-label { flex: 1; }
+.kpi-name   { font-size: 13px; font-weight: 500; }
+.kpi-detail { font-size: 11px; color: var(--sub); }
+.kpi-num    { font-size: 13px; font-weight: 700; }
+
+/* ── ACTIVITY ────────────────────────────────── */
+.act-list { display: flex; flex-direction: column; }
+.act-item { display: flex; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--border); }
+.act-item:last-child { border-bottom: none; }
+.act-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--sub); margin-top: 5px; flex-shrink: 0; }
+.act-text { font-size: 13px; line-height: 1.4; }
+.act-time { font-size: 11.5px; color: var(--sub); margin-top: 2px; }
+
+/* ── NOTIFICATIONS ───────────────────────────── */
+.notif-list { display: flex; flex-direction: column; gap: 2px; }
+.notif-item {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 12px; border-radius: var(--r);
+  cursor: pointer; transition: background var(--trans);
+}
+.notif-item:hover  { background: var(--acc-dim); }
+.notif-item.unread { background: var(--acc-dim); }
+.notif-ico { width: 36px; height: 36px; background: var(--bg); border-radius: 50%; display: grid; place-items: center; font-size: 16px; flex-shrink: 0; position: relative; }
+.notif-dot { position: absolute; top: 0; right: 0; width: 9px; height: 9px; background: var(--blue); border-radius: 50%; border: 2px solid var(--surface); }
+.notif-text { font-size: 13px; line-height: 1.4; }
+.notif-time { font-size: 11.5px; color: var(--sub); margin-top: 2px; }
+
+/* ── SETTINGS ────────────────────────────────── */
+.setting-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 13px 0; border-bottom: 1px solid var(--border);
+}
+.setting-row:last-child { border-bottom: none; }
+.setting-name { font-size: 14px; font-weight: 500; }
+.setting-desc { font-size: 12px; color: var(--sub); margin-top: 2px; }
+
 .toggle {
-  width: 38px; height: 22px;
-  border-radius: 11px;
-  background: var(--border);
-  position: relative;
-  cursor: pointer;
-  transition: background 0.2s;
-  border: none;
-  flex-shrink: 0;
+  width: 36px; height: 20px; border-radius: 10px;
+  background: var(--border); position: relative;
+  cursor: pointer; transition: background .2s; flex-shrink: 0;
 }
-.toggle.on { background: var(--text); }
+.toggle.on { background: var(--accent); }
 .toggle::after {
-  content: '';
-  position: absolute;
-  width: 16px; height: 16px;
-  border-radius: 50%;
-  background: white;
-  top: 3px; left: 3px;
-  transition: transform 0.2s;
+  content: ''; position: absolute;
+  width: 14px; height: 14px; border-radius: 50%;
+  background: #fff; top: 3px; left: 3px;
+  transition: transform .2s;
 }
 .toggle.on::after { transform: translateX(16px); }
 
-.setting-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 14px 0;
-  border-bottom: 1px solid var(--border);
+/* ── FORM ────────────────────────────────────── */
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.form-full  { grid-column: 1 / -1; }
+.form-group { display: flex; flex-direction: column; gap: 5px; }
+.form-label { font-size: 11.5px; font-weight: 600; color: var(--sub); text-transform: uppercase; letter-spacing: .4px; }
+.form-input {
+  padding: 8px 11px; background: var(--bg);
+  border: 1px solid var(--border); border-radius: var(--r);
+  color: var(--text); font-size: 13.5px; outline: none; width: 100%;
+  transition: border-color var(--trans);
 }
-.setting-row:last-child { border-bottom: none; }
-.setting-info {}
-.setting-name { font-size: 14px; font-weight: 500; color: var(--text); }
-.setting-desc { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.form-input:focus { border-color: var(--accent); }
+.form-input::placeholder { color: var(--sub); }
+.form-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 14px; }
 
-/* ─── THEME PICKER ───────────────────────────── */
-.theme-dots { display: flex; gap: 8px; flex-wrap: wrap; }
+/* ── THEME DOTS ──────────────────────────────── */
+.theme-dots { display: flex; gap: 8px; }
 .theme-dot {
-  width: 24px; height: 24px;
-  border-radius: 50%;
-  cursor: pointer;
-  border: 2.5px solid transparent;
-  transition: transform 0.2s, border-color 0.2s;
+  width: 22px; height: 22px; border-radius: 50%; cursor: pointer;
+  border: 2px solid transparent; transition: transform .2s, border-color .2s;
 }
-.theme-dot:hover { transform: scale(1.15); }
-.theme-dot.active { border-color: var(--text); transform: scale(1.1); }
+.theme-dot:hover  { transform: scale(1.15); }
+.theme-dot.active { border-color: var(--text); }
 
-/* ─── NOTIFICATION PANEL ─────────────────────── */
-.notif-list { display: flex; flex-direction: column; gap: 1px; }
-.notif-item {
-  display: flex; align-items: flex-start; gap: 12px;
-  padding: 14px;
-  border-radius: var(--r);
-  transition: background var(--transition);
-  cursor: pointer;
-}
-.notif-item:hover { background: var(--acc-subtle); }
-.notif-item.unread { background: var(--acc-subtle); }
-.notif-avatar-wrap { position: relative; flex-shrink: 0; }
-.notif-avatar { width: 38px; height: 38px; border-radius: 50%; background: var(--surface2); display: grid; place-items: center; font-size: 18px; }
-.notif-unread-dot {
-  position: absolute; top: 0; right: 0;
-  width: 9px; height: 9px;
-  background: var(--blue); border-radius: 50%;
-  border: 2px solid var(--surface);
-}
-.notif-body { flex: 1; min-width: 0; }
-.notif-text { font-size: 13.5px; color: var(--text); line-height: 1.4; }
-.notif-time { font-size: 11.5px; color: var(--muted); margin-top: 3px; }
-
-/* ─── CUSTOMERS PAGE ─────────────────────────── */
-.customer-filters {
-  display: flex; gap: 8px; flex-wrap: wrap;
-  margin-bottom: 16px;
-}
-.filter-btn {
-  padding: 6px 14px;
-  border-radius: 20px;
-  font-size: 12.5px;
-  font-weight: 600;
-  border: 1px solid var(--border);
-  color: var(--muted);
-  transition: all var(--transition);
-  cursor: pointer;
-  background: none;
-}
-.filter-btn:hover { color: var(--text); border-color: var(--text); }
-.filter-btn.active { background: var(--text); color: var(--bg); border-color: var(--text); }
-
-.customer-row { cursor: pointer; }
-
-/* ─── OVERLAY ─────────────────────────────────── */
-#overlay {
-  display: none; position: fixed; inset: 0;
-  background: rgba(0,0,0,0.4); z-index: 250;
-}
+/* ── OVERLAY ─────────────────────────────────── */
+#overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 190; }
 #overlay.show { display: block; }
 
-/* ─── TOAST ──────────────────────────────────── */
-#toast-container {
-  position: fixed; bottom: 24px; right: 24px;
+/* ── TOAST ───────────────────────────────────── */
+#toasts {
+  position: fixed; bottom: 20px; right: 20px;
   display: flex; flex-direction: column; gap: 8px; z-index: 9999;
 }
 .toast {
-  background: var(--text);
-  color: var(--bg);
-  padding: 12px 18px;
-  border-radius: var(--r);
-  font-size: 13px;
-  font-weight: 500;
+  background: var(--text); color: var(--bg);
+  padding: 10px 16px; border-radius: var(--r);
+  font-size: 13px; font-weight: 500;
   box-shadow: var(--shadow);
-  animation: slideIn 0.25s ease, fadeOut 0.3s ease 2.5s forwards;
-  max-width: 280px;
+  animation: toastIn .2s ease, toastOut .3s ease 2.4s forwards;
+  max-width: 260px;
 }
-@keyframes slideIn { from { opacity:0; transform:translateX(20px); } to { opacity:1; transform:none; } }
-@keyframes fadeOut { to { opacity:0; transform:translateX(20px); } }
+@keyframes toastIn  { from { opacity:0; transform: translateX(16px); } }
+@keyframes toastOut { to   { opacity:0; transform: translateX(16px); } }
 
-/* ─── RESPONSIVE ─────────────────────────────── */
-@media (max-width: 1100px) {
-  .stat-grid { grid-template-columns: repeat(2, 1fr); }
-  .two-col { grid-template-columns: 1fr; }
-  .three-col { grid-template-columns: 1fr 1fr; }
+/* ── CODE TAG ────────────────────────────────── */
+.mono {
+  font-size: 12px;
+  background: var(--acc-dim);
+  padding: 2px 6px;
+  border-radius: 5px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -.2px;
 }
 
+/* ════════════════════════════════════════════════
+   RESPONSIVE — Tablet ≤ 1024px
+   ════════════════════════════════════════════════ */
+@media (max-width: 1024px) {
+  .grid-4 { grid-template-columns: repeat(2, 1fr); }
+  .grid-2 { grid-template-columns: 1fr; }
+  .grid-3 { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ════════════════════════════════════════════════
+   RESPONSIVE — Mobile ≤ 768px
+   ════════════════════════════════════════════════ */
 @media (max-width: 768px) {
-  :root { --sidebar-w: 220px; }
-  #sidebar { transform: translateX(calc(-1 * var(--sidebar-w))); }
-  #sidebar.open { transform: translateX(0); box-shadow: 8px 0 30px rgba(0,0,0,0.15); }
-  #app { margin-left: 0; }
-  .menu-btn { display: flex; }
-  .topbar-search { display: none; }
-  .stat-grid { grid-template-columns: 1fr 1fr; }
-  .three-col { grid-template-columns: 1fr; }
+  #layout {
+    grid-template-columns: 1fr;
+    grid-template-rows: var(--topbar) 1fr;
+    grid-template-areas: "top" "main";
+  }
+
+  #sidebar {
+    position: fixed;
+    left: 0; top: 0; bottom: 0;
+    width: var(--sidebar);
+    transform: translateX(-100%);
+    z-index: 200;
+    transition: transform .25s ease;
+  }
+  #sidebar.open { transform: translateX(0); box-shadow: 8px 0 32px rgba(0,0,0,.18); }
+
+  .menu-btn  { display: flex; }
+  .search-box { display: none; }
+
+  .grid-4 { grid-template-columns: repeat(2, 1fr); }
+  .grid-3 { grid-template-columns: 1fr; }
+  .grid-2 { grid-template-columns: 1fr; }
+  .grid-2-eq { grid-template-columns: 1fr; }
+
+  .page { padding: 14px; }
+  #topbar { padding: 0 14px; }
+
+  .stat-value { font-size: 20px; }
+  .page-hdr h1 { font-size: 18px; }
+
   .form-grid { grid-template-columns: 1fr; }
-  .page { padding: 16px 16px 40px; }
-  #topbar { padding: 0 16px; }
-  .two-col { gap: 12px; }
-  .stat-value { font-size: 22px; }
 }
 
+/* ════════════════════════════════════════════════
+   RESPONSIVE — Small mobile ≤ 480px
+   ════════════════════════════════════════════════ */
 @media (max-width: 480px) {
-  .stat-grid { grid-template-columns: 1fr; }
-  .form-grid { grid-template-columns: 1fr; }
+  .grid-4 { grid-template-columns: 1fr; }
+  .filters { gap: 4px; }
+  .filter-btn { font-size: 12px; padding: 4px 10px; }
+
+  .card { padding: 14px; }
+  .page { padding: 10px; }
+
+  .data-table th,
+  .data-table td { padding: 9px 12px; }
 }
 </style>
 </head>
 <body data-theme="light">
 
-<!-- OVERLAY -->
 <div id="overlay" onclick="closeSidebar()"></div>
+<div id="toasts"></div>
 
-<!-- TOAST -->
-<div id="toast-container"></div>
-
-<!-- SIDEBAR -->
+<!-- ── SIDEBAR ──────────────────────────────── -->
+<div id="layout">
 <aside id="sidebar">
-  <div class="s-logo">
-    <div class="s-logo-mark">⬡</div>
-    <span class="s-logo-text">AdminPanel</span>
-    <span class="s-logo-badge">v2</span>
+  <div class="logo">
+    <div class="logo-icon">⬡</div>
+    AdminPanel
+    <span class="logo-version">v2</span>
   </div>
 
   <nav>
-    <p class="s-section-label">Principal</p>
-    <button class="nav-item active" onclick="navigate('dashboard', this)">
-      <span class="icon">◈</span> Visão Geral
+    <p class="nav-section">Principal</p>
+    <button class="nav-item active" onclick="nav('dashboard', this)">
+      <span class="nav-icon">◈</span> Visão Geral
     </button>
-    <button class="nav-item" onclick="navigate('analytics', this)">
-      <span class="icon">◎</span> Analytics
+    <button class="nav-item" onclick="nav('analytics', this)">
+      <span class="nav-icon">◎</span> Analytics
       <span class="nav-badge">Novo</span>
     </button>
-    <button class="nav-item" onclick="navigate('orders', this)">
-      <span class="icon">▦</span> Pedidos
+    <button class="nav-item" onclick="nav('orders', this)">
+      <span class="nav-icon">▦</span> Pedidos
       <span class="nav-badge">12</span>
     </button>
-    <button class="nav-item" onclick="navigate('customers', this)">
-      <span class="icon">◉</span> Clientes
+    <button class="nav-item" onclick="nav('customers', this)">
+      <span class="nav-icon">◉</span> Clientes
     </button>
-    <button class="nav-item" onclick="navigate('products', this)">
-      <span class="icon">◫</span> Produtos
+    <button class="nav-item" onclick="nav('products', this)">
+      <span class="nav-icon">◫</span> Produtos
     </button>
-    <p class="s-section-label">Sistema</p>
-    <button class="nav-item" onclick="navigate('notifications', this)">
-      <span class="icon">◯</span> Notificações
+    <p class="nav-section">Sistema</p>
+    <button class="nav-item" onclick="nav('notifications', this)">
+      <span class="nav-icon">◯</span> Notificações
       <span class="nav-badge">3</span>
     </button>
-    <button class="nav-item" onclick="navigate('settings', this)">
-      <span class="icon">◌</span> Configurações
+    <button class="nav-item" onclick="nav('settings', this)">
+      <span class="nav-icon">◌</span> Configurações
     </button>
   </nav>
 
-  <div class="s-footer">
-    <div class="s-user" onclick="toast('Perfil em desenvolvimento')">
+  <div class="sidebar-footer">
+    <div class="user-card" onclick="toast('Perfil em desenvolvimento')">
       <div class="avatar">JS</div>
-      <div class="s-user-info">
-        <div class="s-user-name">João Silva</div>
-        <div class="s-user-role">Administrador</div>
+      <div>
+        <div class="user-name">João Silva</div>
+        <div class="user-role">Administrador</div>
       </div>
     </div>
   </div>
 </aside>
 
-<!-- APP -->
-<div id="app">
-  <!-- TOPBAR -->
-  <header id="topbar">
-    <button class="menu-btn" onclick="toggleSidebar()">
-      <span></span><span></span><span></span>
+<!-- ── TOPBAR ──────────────────────────────── -->
+<header id="topbar">
+  <button class="menu-btn" onclick="toggleSidebar()">
+    <span></span><span></span><span></span>
+  </button>
+  <span class="page-title" id="page-label">Visão Geral</span>
+  <div class="search-box">
+    <span style="color:var(--sub);font-size:14px">⌕</span>
+    <input type="text" placeholder="Buscar..." oninput="handleSearch(this.value)" />
+  </div>
+  <div class="topbar-actions">
+    <button class="icon-btn" onclick="nav('notifications', document.querySelector('[onclick*=notifications]'))" title="Notificações">
+      🔔<span class="notif-dot" id="bell-dot"></span>
     </button>
+    <button class="icon-btn" onclick="toggleTheme()" id="theme-btn" title="Tema">🌙</button>
+  </div>
+</header>
 
-    <span class="topbar-page-title" id="page-label">Visão Geral</span>
+<!-- ── MAIN ────────────────────────────────── -->
+<main id="main">
 
-    <div class="topbar-search">
-      <span class="search-icon">⌕</span>
-      <input type="text" placeholder="Buscar..." oninput="handleSearch(this.value)" />
+  <!-- DASHBOARD -->
+  <div class="page active" id="page-dashboard">
+    <div class="page-hdr">
+      <div><h1>Visão Geral</h1><p>Resumo de desempenho — Março 2025</p></div>
     </div>
 
-    <div class="topbar-actions">
-      <button class="icon-btn" onclick="navigate('notifications', document.querySelector('[onclick*=notifications]'))" title="Notificações">
-        🔔 <span class="dot"></span>
-      </button>
-      <button class="icon-btn" onclick="toggleTheme()" title="Alternar tema" id="theme-btn">🌙</button>
-    </div>
-  </header>
-
-  <!-- PAGES -->
-  <main id="main">
-
-    <!-- ═══ DASHBOARD ═══ -->
-    <div class="page active" id="page-dashboard">
-      <div class="page-header">
-        <h1>Visão Geral</h1>
-        <p>Resumo do desempenho — Março 2025</p>
+    <div class="grid-4">
+      <div class="card stat">
+        <div class="stat-row"><span class="stat-label">Receita Total</span><span class="stat-icon">◈</span></div>
+        <div class="stat-value">R$ 84.320</div>
+        <div class="stat-delta"><span class="up">↑ 14,2%</span> vs. mês anterior</div>
       </div>
-
-      <!-- STAT CARDS -->
-      <div class="stat-grid">
-        <div class="card stat-card">
-          <div class="stat-top">
-            <span class="stat-label">Receita Total</span>
-            <span class="stat-icon">◈</span>
-          </div>
-          <div class="stat-value">R$ 84.320</div>
-          <div class="stat-sub"><span class="up">↑ 14,2%</span> vs. mês anterior</div>
-        </div>
-        <div class="card stat-card">
-          <div class="stat-top">
-            <span class="stat-label">Novos Pedidos</span>
-            <span class="stat-icon">▦</span>
-          </div>
-          <div class="stat-value">1.284</div>
-          <div class="stat-sub"><span class="up">↑ 8,5%</span> vs. mês anterior</div>
-        </div>
-        <div class="card stat-card">
-          <div class="stat-top">
-            <span class="stat-label">Clientes Ativos</span>
-            <span class="stat-icon">◉</span>
-          </div>
-          <div class="stat-value">5.610</div>
-          <div class="stat-sub"><span class="up">↑ 3,1%</span> vs. mês anterior</div>
-        </div>
-        <div class="card stat-card">
-          <div class="stat-top">
-            <span class="stat-label">Taxa de Conversão</span>
-            <span class="stat-icon">◎</span>
-          </div>
-          <div class="stat-value">18,4%</div>
-          <div class="stat-sub"><span class="dn">↓ 1,2%</span> vs. mês anterior</div>
-        </div>
+      <div class="card stat">
+        <div class="stat-row"><span class="stat-label">Novos Pedidos</span><span class="stat-icon">▦</span></div>
+        <div class="stat-value">1.284</div>
+        <div class="stat-delta"><span class="up">↑ 8,5%</span> vs. mês anterior</div>
       </div>
-
-      <!-- CHARTS ROW -->
-      <div class="two-col">
-        <div class="card">
-          <div class="card-header">
-            <div>
-              <div class="card-title">Receita Mensal</div>
-              <div class="card-sub-title">Vendas vs. Lucros — últimos 8 meses</div>
-            </div>
-            <button class="card-action" onclick="toast('Exportado!')">Exportar</button>
-          </div>
-          <div class="chart-wrap"><canvas id="lineChart" height="200"></canvas></div>
-        </div>
-        <div class="card">
-          <div class="card-header">
-            <div><div class="card-title">Por Categoria</div></div>
-          </div>
-          <div class="chart-wrap"><canvas id="donutChart" height="200"></canvas></div>
-          <div class="progress-list" style="margin-top:18px">
-            <div class="progress-item">
-              <div class="progress-header"><span class="progress-label">Eletrônicos</span><span class="progress-value">40%</span></div>
-              <div class="progress-bar"><div class="progress-fill" style="width:40%"></div></div>
-            </div>
-            <div class="progress-item">
-              <div class="progress-header"><span class="progress-label">Roupas</span><span class="progress-value">25%</span></div>
-              <div class="progress-bar"><div class="progress-fill" style="width:25%"></div></div>
-            </div>
-            <div class="progress-item">
-              <div class="progress-header"><span class="progress-label">Casa</span><span class="progress-value">20%</span></div>
-              <div class="progress-bar"><div class="progress-fill" style="width:20%"></div></div>
-            </div>
-            <div class="progress-item">
-              <div class="progress-header"><span class="progress-label">Outros</span><span class="progress-value">15%</span></div>
-              <div class="progress-bar"><div class="progress-fill" style="width:15%"></div></div>
-            </div>
-          </div>
-        </div>
+      <div class="card stat">
+        <div class="stat-row"><span class="stat-label">Clientes Ativos</span><span class="stat-icon">◉</span></div>
+        <div class="stat-value">5.610</div>
+        <div class="stat-delta"><span class="up">↑ 3,1%</span> vs. mês anterior</div>
       </div>
-
-      <!-- BOTTOM ROW -->
-      <div class="two-col">
-        <!-- RECENT ORDERS -->
-        <div class="card">
-          <div class="card-header">
-            <div><div class="card-title">Pedidos Recentes</div></div>
-            <button class="card-action" onclick="navigate('orders', document.querySelector('[onclick*=orders]'))">Ver todos</button>
-          </div>
-          <div class="table-scroll">
-            <table class="data-table">
-              <thead>
-                <tr><th>Pedido</th><th>Cliente</th><th>Valor</th><th>Status</th></tr>
-              </thead>
-              <tbody id="recent-orders-body"></tbody>
-            </table>
-          </div>
-        </div>
-        <!-- ACTIVITY -->
-        <div class="card">
-          <div class="card-header">
-            <div><div class="card-title">Atividade Recente</div></div>
-          </div>
-          <div class="activity-list">
-            <div class="activity-item">
-              <div class="activity-dot" style="background:var(--green)"></div>
-              <div class="activity-body">
-                <div class="activity-text">Pedido <strong>#10421</strong> foi confirmado e enviado</div>
-                <div class="activity-time">há 5 minutos</div>
-              </div>
-            </div>
-            <div class="activity-item">
-              <div class="activity-dot" style="background:var(--blue)"></div>
-              <div class="activity-body">
-                <div class="activity-text">Novo cliente <strong>Fernanda Ramos</strong> cadastrado</div>
-                <div class="activity-time">há 18 minutos</div>
-              </div>
-            </div>
-            <div class="activity-item">
-              <div class="activity-dot" style="background:var(--amber)"></div>
-              <div class="activity-body">
-                <div class="activity-text">Estoque de <strong>Notebook Pro</strong> abaixo do mínimo</div>
-                <div class="activity-time">há 34 minutos</div>
-              </div>
-            </div>
-            <div class="activity-item">
-              <div class="activity-dot" style="background:var(--red)"></div>
-              <div class="activity-body">
-                <div class="activity-text">Pedido <strong>#10417</strong> cancelado pelo cliente</div>
-                <div class="activity-time">há 1 hora</div>
-              </div>
-            </div>
-            <div class="activity-item">
-              <div class="activity-dot"></div>
-              <div class="activity-body">
-                <div class="activity-text">Relatório mensal gerado automaticamente</div>
-                <div class="activity-time">há 2 horas</div>
-              </div>
-            </div>
-            <div class="activity-item">
-              <div class="activity-dot" style="background:var(--green)"></div>
-              <div class="activity-body">
-                <div class="activity-text">Meta de vendas de Fevereiro <strong>atingida</strong></div>
-                <div class="activity-time">ontem, 18:42</div>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div class="card stat">
+        <div class="stat-row"><span class="stat-label">Conversão</span><span class="stat-icon">◎</span></div>
+        <div class="stat-value">18,4%</div>
+        <div class="stat-delta"><span class="dn">↓ 1,2%</span> vs. mês anterior</div>
       </div>
     </div>
 
-    <!-- ═══ ANALYTICS ═══ -->
-    <div class="page" id="page-analytics">
-      <div class="page-header">
-        <h1>Analytics</h1>
-        <p>Performance detalhada e métricas avançadas</p>
-      </div>
-
-      <div class="three-col" style="margin-bottom:var(--gap)">
-        <div class="card stat-card">
-          <div class="stat-top"><span class="stat-label">Ticket Médio</span><span class="stat-icon">◈</span></div>
-          <div class="stat-value">R$ 247</div>
-          <div class="stat-sub"><span class="up">↑ 5,8%</span></div>
-        </div>
-        <div class="card stat-card">
-          <div class="stat-top"><span class="stat-label">Churn Rate</span><span class="stat-icon">◎</span></div>
-          <div class="stat-value">2,3%</div>
-          <div class="stat-sub"><span class="dn">↑ 0,4%</span> precisa atenção</div>
-        </div>
-        <div class="card stat-card">
-          <div class="stat-top"><span class="stat-label">NPS Score</span><span class="stat-icon">◉</span></div>
-          <div class="stat-value">72</div>
-          <div class="stat-sub"><span class="up">↑ 4 pts</span> excelente</div>
-        </div>
-      </div>
-
-      <div class="two-col">
-        <div class="card">
-          <div class="card-header">
-            <div><div class="card-title">Comparativo Trimestral</div><div class="card-sub-title">Meta vs. Realizado</div></div>
-          </div>
-          <div class="chart-wrap"><canvas id="barChart" height="220"></canvas></div>
-        </div>
-        <div class="card">
-          <div class="card-header"><div><div class="card-title">Top Fontes de Tráfego</div></div></div>
-          <div class="kpi-row">
-            <div class="kpi-item">
-              <div class="kpi-icon">🔍</div>
-              <div class="kpi-info"><div class="kpi-name">Busca Orgânica</div><div class="kpi-detail">Google, Bing</div></div>
-              <div class="kpi-num">38%</div>
-            </div>
-            <div class="kpi-item">
-              <div class="kpi-icon">📱</div>
-              <div class="kpi-info"><div class="kpi-name">Redes Sociais</div><div class="kpi-detail">Instagram, TikTok</div></div>
-              <div class="kpi-num">27%</div>
-            </div>
-            <div class="kpi-item">
-              <div class="kpi-icon">✉️</div>
-              <div class="kpi-info"><div class="kpi-name">E-mail Marketing</div><div class="kpi-detail">Newsletter</div></div>
-              <div class="kpi-num">19%</div>
-            </div>
-            <div class="kpi-item">
-              <div class="kpi-icon">🔗</div>
-              <div class="kpi-info"><div class="kpi-name">Direto</div><div class="kpi-detail">URL direta</div></div>
-              <div class="kpi-num">11%</div>
-            </div>
-            <div class="kpi-item">
-              <div class="kpi-icon">📢</div>
-              <div class="kpi-info"><div class="kpi-name">Anúncios Pagos</div><div class="kpi-detail">Google Ads, Meta</div></div>
-              <div class="kpi-num">5%</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ═══ ORDERS ═══ -->
-    <div class="page" id="page-orders">
-      <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
-        <div><h1>Pedidos</h1><p>Gerencie e acompanhe todos os pedidos</p></div>
-        <button class="btn btn-primary" onclick="toast('Exportação iniciada!')">↓ Exportar CSV</button>
-      </div>
-
+    <div class="grid-2">
       <div class="card">
-        <div class="customer-filters" style="margin-bottom:16px">
-          <button class="filter-btn active" onclick="filterOrders('todos', this)">Todos</button>
-          <button class="filter-btn" onclick="filterOrders('Pago', this)">Pagos</button>
-          <button class="filter-btn" onclick="filterOrders('Pendente', this)">Pendentes</button>
-          <button class="filter-btn" onclick="filterOrders('Enviado', this)">Enviados</button>
-          <button class="filter-btn" onclick="filterOrders('Cancelado', this)">Cancelados</button>
+        <div class="card-hdr">
+          <div><div class="card-title">Receita Mensal</div><div class="card-sub">Vendas vs. Lucros — últimos 8 meses</div></div>
+          <button class="card-link" onclick="toast('Exportado!')">Exportar</button>
         </div>
-        <div class="table-scroll">
+        <canvas id="lineChart" height="190"></canvas>
+      </div>
+      <div class="card">
+        <div class="card-hdr"><div class="card-title">Por Categoria</div></div>
+        <canvas id="donutChart" height="160"></canvas>
+        <div class="prog-list">
+          <div class="prog-item"><div class="prog-row"><span>Eletrônicos</span><span>40%</span></div><div class="prog-track"><div class="prog-fill" style="width:40%"></div></div></div>
+          <div class="prog-item"><div class="prog-row"><span>Roupas</span><span>25%</span></div><div class="prog-track"><div class="prog-fill" style="width:25%"></div></div></div>
+          <div class="prog-item"><div class="prog-row"><span>Casa</span><span>20%</span></div><div class="prog-track"><div class="prog-fill" style="width:20%"></div></div></div>
+          <div class="prog-item"><div class="prog-row"><span>Outros</span><span>15%</span></div><div class="prog-track"><div class="prog-fill" style="width:15%"></div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-hdr">
+          <div class="card-title">Pedidos Recentes</div>
+          <button class="card-link" onclick="nav('orders', document.querySelector('[onclick*=orders]'))">Ver todos</button>
+        </div>
+        <div class="tbl-wrap">
           <table class="data-table">
-            <thead>
-              <tr>
-                <th onclick="sortOrders('id')" style="cursor:pointer">Pedido ↕</th>
-                <th>Cliente</th>
-                <th>Produto</th>
-                <th onclick="sortOrders('valor')" style="cursor:pointer">Valor ↕</th>
-                <th>Status</th>
-                <th>Data</th>
-                <th>Ação</th>
-              </tr>
-            </thead>
-            <tbody id="orders-body"></tbody>
+            <thead><tr><th>Pedido</th><th>Cliente</th><th>Valor</th><th>Status</th></tr></thead>
+            <tbody id="recent-orders-body"></tbody>
           </table>
         </div>
       </div>
-    </div>
-
-    <!-- ═══ CUSTOMERS ═══ -->
-    <div class="page" id="page-customers">
-      <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
-        <div><h1>Clientes</h1><p>Base de clientes e segmentação</p></div>
-        <button class="btn btn-primary" onclick="openNewCustomer()">+ Novo Cliente</button>
-      </div>
-
-      <div class="stat-grid" style="margin-bottom:var(--gap)">
-        <div class="card stat-card">
-          <div class="stat-top"><span class="stat-label">Total</span></div>
-          <div class="stat-value">5.610</div>
-          <div class="stat-sub"><span class="up">↑ 3,1%</span></div>
-        </div>
-        <div class="card stat-card">
-          <div class="stat-top"><span class="stat-label">Ativos</span></div>
-          <div class="stat-value">4.820</div>
-          <div class="stat-sub">85,9% do total</div>
-        </div>
-        <div class="card stat-card">
-          <div class="stat-top"><span class="stat-label">Premium</span></div>
-          <div class="stat-value">342</div>
-          <div class="stat-sub"><span class="up">↑ 12</span> este mês</div>
-        </div>
-        <div class="card stat-card">
-          <div class="stat-top"><span class="stat-label">Churn</span></div>
-          <div class="stat-value">128</div>
-          <div class="stat-sub"><span class="dn">↑ 8</span> este mês</div>
-        </div>
-      </div>
-
       <div class="card">
-        <div class="customer-filters">
-          <button class="filter-btn active" onclick="filterCustomers('todos', this)">Todos</button>
-          <button class="filter-btn" onclick="filterCustomers('Ativo', this)">Ativos</button>
-          <button class="filter-btn" onclick="filterCustomers('Premium', this)">Premium</button>
-          <button class="filter-btn" onclick="filterCustomers('Inativo', this)">Inativos</button>
-        </div>
-        <div class="table-scroll">
-          <table class="data-table">
-            <thead>
-              <tr><th>Cliente</th><th>E-mail</th><th>Plano</th><th>Pedidos</th><th>Gasto Total</th><th>Status</th></tr>
-            </thead>
-            <tbody id="customers-body"></tbody>
-          </table>
+        <div class="card-hdr"><div class="card-title">Atividade Recente</div></div>
+        <div class="act-list">
+          <div class="act-item"><div class="act-dot" style="background:var(--green)"></div><div><div class="act-text">Pedido <strong>#10421</strong> confirmado e enviado</div><div class="act-time">há 5 minutos</div></div></div>
+          <div class="act-item"><div class="act-dot" style="background:var(--blue)"></div><div><div class="act-text">Novo cliente <strong>Fernanda Ramos</strong> cadastrado</div><div class="act-time">há 18 minutos</div></div></div>
+          <div class="act-item"><div class="act-dot" style="background:var(--amber)"></div><div><div class="act-text">Estoque de <strong>Notebook Pro</strong> abaixo do mínimo</div><div class="act-time">há 34 minutos</div></div></div>
+          <div class="act-item"><div class="act-dot" style="background:var(--red)"></div><div><div class="act-text">Pedido <strong>#10417</strong> cancelado</div><div class="act-time">há 1 hora</div></div></div>
+          <div class="act-item"><div class="act-dot"></div><div><div class="act-text">Relatório mensal gerado automaticamente</div><div class="act-time">há 2 horas</div></div></div>
+          <div class="act-item"><div class="act-dot" style="background:var(--green)"></div><div><div class="act-text">Meta de Fevereiro <strong>atingida</strong></div><div class="act-time">ontem, 18:42</div></div></div>
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- ═══ PRODUCTS ═══ -->
-    <div class="page" id="page-products">
-      <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
-        <div><h1>Produtos</h1><p>Catálogo e controle de estoque</p></div>
-        <button class="btn btn-primary" onclick="toast('Formulário em desenvolvimento')">+ Novo Produto</button>
+  <!-- ANALYTICS -->
+  <div class="page" id="page-analytics">
+    <div class="page-hdr"><div><h1>Analytics</h1><p>Performance detalhada e métricas avançadas</p></div></div>
+
+    <div class="grid-3">
+      <div class="card stat">
+        <div class="stat-row"><span class="stat-label">Ticket Médio</span><span class="stat-icon">◈</span></div>
+        <div class="stat-value">R$ 247</div>
+        <div class="stat-delta"><span class="up">↑ 5,8%</span></div>
       </div>
+      <div class="card stat">
+        <div class="stat-row"><span class="stat-label">Churn Rate</span><span class="stat-icon">◎</span></div>
+        <div class="stat-value">2,3%</div>
+        <div class="stat-delta"><span class="dn">↑ 0,4%</span> precisa atenção</div>
+      </div>
+      <div class="card stat">
+        <div class="stat-row"><span class="stat-label">NPS Score</span><span class="stat-icon">◉</span></div>
+        <div class="stat-value">72</div>
+        <div class="stat-delta"><span class="up">↑ 4 pts</span> excelente</div>
+      </div>
+    </div>
 
+    <div class="grid-2">
       <div class="card">
-        <div class="table-scroll">
-          <table class="data-table">
-            <thead>
-              <tr><th>Produto</th><th>Categoria</th><th>Preço</th><th>Estoque</th><th>Vendidos</th><th>Status</th></tr>
-            </thead>
-            <tbody id="products-body"></tbody>
-          </table>
-        </div>
+        <div class="card-hdr"><div><div class="card-title">Comparativo Trimestral</div><div class="card-sub">Meta vs. Realizado</div></div></div>
+        <canvas id="barChart" height="210"></canvas>
       </div>
-    </div>
-
-    <!-- ═══ NOTIFICATIONS ═══ -->
-    <div class="page" id="page-notifications">
-      <div class="page-header" style="display:flex;align-items:center;justify-content:space-between">
-        <div><h1>Notificações</h1><p>3 não lidas</p></div>
-        <button class="btn btn-ghost" onclick="markAllRead()">Marcar todas como lidas</button>
-      </div>
-
       <div class="card">
-        <div class="notif-list">
-          <div class="notif-item unread">
-            <div class="notif-avatar-wrap">
-              <div class="notif-avatar">🛒</div>
-              <div class="notif-unread-dot"></div>
-            </div>
-            <div class="notif-body">
-              <div class="notif-text">Pedido <strong>#10421</strong> foi confirmado e está sendo processado.</div>
-              <div class="notif-time">há 5 minutos</div>
-            </div>
-          </div>
-          <div class="notif-item unread">
-            <div class="notif-avatar-wrap">
-              <div class="notif-avatar">⚠️</div>
-              <div class="notif-unread-dot"></div>
-            </div>
-            <div class="notif-body">
-              <div class="notif-text">Estoque de <strong>Notebook Pro</strong> está abaixo do nível mínimo (3 unidades).</div>
-              <div class="notif-time">há 34 minutos</div>
-            </div>
-          </div>
-          <div class="notif-item unread">
-            <div class="notif-avatar-wrap">
-              <div class="notif-avatar">👤</div>
-              <div class="notif-unread-dot"></div>
-            </div>
-            <div class="notif-body">
-              <div class="notif-text">Novo cliente <strong>Fernanda Ramos</strong> realizou o primeiro pedido.</div>
-              <div class="notif-time">há 18 minutos</div>
-            </div>
-          </div>
-          <div class="notif-item">
-            <div class="notif-avatar-wrap">
-              <div class="notif-avatar">✅</div>
-            </div>
-            <div class="notif-body">
-              <div class="notif-text">Meta de vendas de Fevereiro atingida com <strong>108%</strong> do objetivo.</div>
-              <div class="notif-time">ontem, 18:42</div>
-            </div>
-          </div>
-          <div class="notif-item">
-            <div class="notif-avatar-wrap">
-              <div class="notif-avatar">📊</div>
-            </div>
-            <div class="notif-body">
-              <div class="notif-text">Relatório mensal gerado e disponível para download.</div>
-              <div class="notif-time">ontem, 09:00</div>
-            </div>
-          </div>
+        <div class="card-hdr"><div class="card-title">Top Fontes de Tráfego</div></div>
+        <div class="kpi-list">
+          <div class="kpi-item"><div class="kpi-icon">🔍</div><div class="kpi-label"><div class="kpi-name">Busca Orgânica</div><div class="kpi-detail">Google, Bing</div></div><div class="kpi-num">38%</div></div>
+          <div class="kpi-item"><div class="kpi-icon">📱</div><div class="kpi-label"><div class="kpi-name">Redes Sociais</div><div class="kpi-detail">Instagram, TikTok</div></div><div class="kpi-num">27%</div></div>
+          <div class="kpi-item"><div class="kpi-icon">✉️</div><div class="kpi-label"><div class="kpi-name">E-mail Marketing</div><div class="kpi-detail">Newsletter</div></div><div class="kpi-num">19%</div></div>
+          <div class="kpi-item"><div class="kpi-icon">🔗</div><div class="kpi-label"><div class="kpi-name">Direto</div><div class="kpi-detail">URL direta</div></div><div class="kpi-num">11%</div></div>
+          <div class="kpi-item"><div class="kpi-icon">📢</div><div class="kpi-label"><div class="kpi-name">Anúncios Pagos</div><div class="kpi-detail">Google Ads, Meta</div></div><div class="kpi-num">5%</div></div>
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- ═══ SETTINGS ═══ -->
-    <div class="page" id="page-settings">
-      <div class="page-header">
-        <h1>Configurações</h1>
-        <p>Personalize sua experiência</p>
+  <!-- ORDERS -->
+  <div class="page" id="page-orders">
+    <div class="page-hdr">
+      <div><h1>Pedidos</h1><p>Gerencie e acompanhe todos os pedidos</p></div>
+      <button class="btn btn-primary" onclick="toast('Exportação iniciada!')">↓ Exportar CSV</button>
+    </div>
+    <div class="card">
+      <div class="filters">
+        <button class="filter-btn active" onclick="filterOrders('todos', this)">Todos</button>
+        <button class="filter-btn" onclick="filterOrders('Pago', this)">Pagos</button>
+        <button class="filter-btn" onclick="filterOrders('Pendente', this)">Pendentes</button>
+        <button class="filter-btn" onclick="filterOrders('Enviado', this)">Enviados</button>
+        <button class="filter-btn" onclick="filterOrders('Cancelado', this)">Cancelados</button>
       </div>
+      <div class="tbl-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th style="cursor:pointer" onclick="sortOrders('id')">Pedido ↕</th>
+              <th>Cliente</th><th>Produto</th>
+              <th style="cursor:pointer" onclick="sortOrders('valor')">Valor ↕</th>
+              <th>Status</th><th>Data</th><th>Ação</th>
+            </tr>
+          </thead>
+          <tbody id="orders-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 
-      <div class="two-col" style="align-items:start">
-        <div style="display:flex;flex-direction:column;gap:var(--gap)">
+  <!-- CUSTOMERS -->
+  <div class="page" id="page-customers">
+    <div class="page-hdr">
+      <div><h1>Clientes</h1><p>Base de clientes e segmentação</p></div>
+      <button class="btn btn-primary" onclick="toast('Formulário em desenvolvimento')">+ Novo Cliente</button>
+    </div>
 
-          <!-- PERFIL -->
-          <div class="card">
-            <div class="card-header"><div class="card-title">Perfil</div></div>
-            <div class="form-grid">
-              <div class="form-group">
-                <label class="form-label">Nome</label>
-                <input class="form-input" type="text" value="João Silva" />
-              </div>
-              <div class="form-group">
-                <label class="form-label">Cargo</label>
-                <input class="form-input" type="text" value="Administrador" />
-              </div>
-              <div class="form-group form-full">
-                <label class="form-label">E-mail</label>
-                <input class="form-input" type="email" value="joao@empresa.com.br" />
-              </div>
-              <div class="form-group form-full">
-                <label class="form-label">Bio</label>
-                <textarea class="form-input" rows="2" style="resize:vertical">Gestor de operações e vendas.</textarea>
-              </div>
-            </div>
-            <div class="form-actions" style="margin-top:14px">
-              <button class="btn btn-ghost">Cancelar</button>
-              <button class="btn btn-primary" onclick="toast('Perfil salvo!')">Salvar</button>
-            </div>
-          </div>
+    <div class="grid-4" style="margin-bottom:16px">
+      <div class="card stat"><div class="stat-row"><span class="stat-label">Total</span></div><div class="stat-value">5.610</div><div class="stat-delta"><span class="up">↑ 3,1%</span></div></div>
+      <div class="card stat"><div class="stat-row"><span class="stat-label">Ativos</span></div><div class="stat-value">4.820</div><div class="stat-delta">85,9% do total</div></div>
+      <div class="card stat"><div class="stat-row"><span class="stat-label">Premium</span></div><div class="stat-value">342</div><div class="stat-delta"><span class="up">↑ 12</span> este mês</div></div>
+      <div class="card stat"><div class="stat-row"><span class="stat-label">Churn</span></div><div class="stat-value">128</div><div class="stat-delta"><span class="dn">↑ 8</span> este mês</div></div>
+    </div>
 
-          <!-- SENHA -->
-          <div class="card">
-            <div class="card-header"><div class="card-title">Segurança</div></div>
-            <div class="form-grid">
-              <div class="form-group form-full">
-                <label class="form-label">Senha atual</label>
-                <input class="form-input" type="password" placeholder="••••••••" />
-              </div>
-              <div class="form-group">
-                <label class="form-label">Nova senha</label>
-                <input class="form-input" type="password" placeholder="••••••••" />
-              </div>
-              <div class="form-group">
-                <label class="form-label">Confirmar</label>
-                <input class="form-input" type="password" placeholder="••••••••" />
-              </div>
-            </div>
-            <div class="form-actions" style="margin-top:14px">
-              <button class="btn btn-primary" onclick="toast('Senha atualizada!')">Atualizar senha</button>
-            </div>
-          </div>
+    <div class="card">
+      <div class="filters">
+        <button class="filter-btn active" onclick="filterCustomers('todos', this)">Todos</button>
+        <button class="filter-btn" onclick="filterCustomers('Ativo', this)">Ativos</button>
+        <button class="filter-btn" onclick="filterCustomers('Premium', this)">Premium</button>
+        <button class="filter-btn" onclick="filterCustomers('Inativo', this)">Inativos</button>
+      </div>
+      <div class="tbl-wrap">
+        <table class="data-table">
+          <thead><tr><th>Cliente</th><th>E-mail</th><th>Plano</th><th>Pedidos</th><th>Gasto Total</th><th>Status</th></tr></thead>
+          <tbody id="customers-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRODUCTS -->
+  <div class="page" id="page-products">
+    <div class="page-hdr">
+      <div><h1>Produtos</h1><p>Catálogo e controle de estoque</p></div>
+      <button class="btn btn-primary" onclick="toast('Formulário em desenvolvimento')">+ Novo Produto</button>
+    </div>
+    <div class="card">
+      <div class="tbl-wrap">
+        <table class="data-table">
+          <thead><tr><th>Produto</th><th>Categoria</th><th>Preço</th><th>Estoque</th><th>Vendidos</th><th>Status</th></tr></thead>
+          <tbody id="products-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- NOTIFICATIONS -->
+  <div class="page" id="page-notifications">
+    <div class="page-hdr">
+      <div><h1>Notificações</h1><p id="unread-count">3 não lidas</p></div>
+      <button class="btn btn-ghost" onclick="markAllRead()">Marcar todas como lidas</button>
+    </div>
+    <div class="card">
+      <div class="notif-list">
+        <div class="notif-item unread">
+          <div class="notif-ico">🛒<span class="notif-dot"></span></div>
+          <div><div class="notif-text">Pedido <strong>#10421</strong> confirmado e sendo processado.</div><div class="notif-time">há 5 minutos</div></div>
         </div>
-
-        <div style="display:flex;flex-direction:column;gap:var(--gap)">
-
-          <!-- APARÊNCIA -->
-          <div class="card">
-            <div class="card-header"><div class="card-title">Aparência</div></div>
-            <div class="setting-row">
-              <div class="setting-info">
-                <div class="setting-name">Modo escuro</div>
-                <div class="setting-desc">Alternar entre claro e escuro</div>
-              </div>
-              <button class="toggle" id="dark-toggle" onclick="toggleTheme()"></button>
-            </div>
-            <div class="setting-row">
-              <div class="setting-info">
-                <div class="setting-name">Cor de destaque</div>
-                <div class="setting-desc">Personaliza elementos do painel</div>
-              </div>
-              <div class="theme-dots">
-                <div class="theme-dot active" style="background:#1a1a2e" onclick="setAccent('#1a1a2e', this)" title="Padrão"></div>
-                <div class="theme-dot" style="background:#2563eb" onclick="setAccent('#2563eb', this)" title="Azul"></div>
-                <div class="theme-dot" style="background:#059669" onclick="setAccent('#059669', this)" title="Verde"></div>
-                <div class="theme-dot" style="background:#db2777" onclick="setAccent('#db2777', this)" title="Rosa"></div>
-                <div class="theme-dot" style="background:#d97706" onclick="setAccent('#d97706', this)" title="Âmbar"></div>
-              </div>
-            </div>
-          </div>
-
-          <!-- NOTIFICAÇÕES -->
-          <div class="card">
-            <div class="card-header"><div class="card-title">Notificações</div></div>
-            <div class="setting-row">
-              <div class="setting-info">
-                <div class="setting-name">Novos pedidos</div>
-                <div class="setting-desc">Notificar ao receber pedidos</div>
-              </div>
-              <button class="toggle on" onclick="this.classList.toggle('on')"></button>
-            </div>
-            <div class="setting-row">
-              <div class="setting-info">
-                <div class="setting-name">Alertas de estoque</div>
-                <div class="setting-desc">Avisar quando estoque baixo</div>
-              </div>
-              <button class="toggle on" onclick="this.classList.toggle('on')"></button>
-            </div>
-            <div class="setting-row">
-              <div class="setting-info">
-                <div class="setting-name">Resumo semanal</div>
-                <div class="setting-desc">Relatório por e-mail toda segunda</div>
-              </div>
-              <button class="toggle" onclick="this.classList.toggle('on')"></button>
-            </div>
-            <div class="setting-row">
-              <div class="setting-info">
-                <div class="setting-name">Alertas de segurança</div>
-                <div class="setting-desc">Novos acessos à conta</div>
-              </div>
-              <button class="toggle on" onclick="this.classList.toggle('on')"></button>
-            </div>
-          </div>
-
-          <!-- CONTA -->
-          <div class="card">
-            <div class="card-header"><div class="card-title">Conta</div></div>
-            <div class="setting-row">
-              <div class="setting-info">
-                <div class="setting-name">Plano atual</div>
-                <div class="setting-desc">Business — R$ 199/mês</div>
-              </div>
-              <button class="btn btn-ghost" onclick="toast('Planos em breve!')">Upgrade</button>
-            </div>
-            <div class="setting-row">
-              <div class="setting-info">
-                <div class="setting-name" style="color:var(--red)">Excluir conta</div>
-                <div class="setting-desc">Esta ação não pode ser desfeita</div>
-              </div>
-              <button class="btn btn-danger" onclick="toast('Confirmação necessária')">Excluir</button>
-            </div>
-          </div>
+        <div class="notif-item unread">
+          <div class="notif-ico">⚠️<span class="notif-dot"></span></div>
+          <div><div class="notif-text">Estoque de <strong>Notebook Pro</strong> abaixo do mínimo (3 unidades).</div><div class="notif-time">há 34 minutos</div></div>
+        </div>
+        <div class="notif-item unread">
+          <div class="notif-ico">👤<span class="notif-dot"></span></div>
+          <div><div class="notif-text">Novo cliente <strong>Fernanda Ramos</strong> realizou o primeiro pedido.</div><div class="notif-time">há 18 minutos</div></div>
+        </div>
+        <div class="notif-item">
+          <div class="notif-ico">✅</div>
+          <div><div class="notif-text">Meta de Fevereiro atingida com <strong>108%</strong> do objetivo.</div><div class="notif-time">ontem, 18:42</div></div>
+        </div>
+        <div class="notif-item">
+          <div class="notif-ico">📊</div>
+          <div><div class="notif-text">Relatório mensal gerado e disponível para download.</div><div class="notif-time">ontem, 09:00</div></div>
         </div>
       </div>
     </div>
+  </div>
 
-  </main>
-</div>
+  <!-- SETTINGS -->
+  <div class="page" id="page-settings">
+    <div class="page-hdr"><div><h1>Configurações</h1><p>Personalize sua experiência</p></div></div>
+
+    <div class="grid-2-eq" style="align-items:start">
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div class="card">
+          <div class="card-hdr"><div class="card-title">Perfil</div></div>
+          <div class="form-grid">
+            <div class="form-group"><label class="form-label">Nome</label><input class="form-input" value="João Silva" /></div>
+            <div class="form-group"><label class="form-label">Cargo</label><input class="form-input" value="Administrador" /></div>
+            <div class="form-group form-full"><label class="form-label">E-mail</label><input class="form-input" type="email" value="joao@empresa.com.br" /></div>
+            <div class="form-group form-full"><label class="form-label">Bio</label><textarea class="form-input" rows="2" style="resize:vertical">Gestor de operações e vendas.</textarea></div>
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-ghost">Cancelar</button>
+            <button class="btn btn-primary" onclick="toast('Perfil salvo!')">Salvar</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-hdr"><div class="card-title">Segurança</div></div>
+          <div class="form-grid">
+            <div class="form-group form-full"><label class="form-label">Senha atual</label><input class="form-input" type="password" placeholder="••••••••" /></div>
+            <div class="form-group"><label class="form-label">Nova senha</label><input class="form-input" type="password" placeholder="••••••••" /></div>
+            <div class="form-group"><label class="form-label">Confirmar</label><input class="form-input" type="password" placeholder="••••••••" /></div>
+          </div>
+          <div class="form-actions"><button class="btn btn-primary" onclick="toast('Senha atualizada!')">Atualizar senha</button></div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div class="card">
+          <div class="card-hdr"><div class="card-title">Aparência</div></div>
+          <div class="setting-row">
+            <div><div class="setting-name">Modo escuro</div><div class="setting-desc">Alternar entre claro e escuro</div></div>
+            <button class="toggle" id="dark-toggle" onclick="toggleTheme()"></button>
+          </div>
+          <div class="setting-row">
+            <div><div class="setting-name">Cor de destaque</div><div class="setting-desc">Personaliza elementos do painel</div></div>
+            <div class="theme-dots">
+              <div class="theme-dot active" style="background:#2563eb" onclick="setAccent('#2563eb','#eff4ff',this)"></div>
+              <div class="theme-dot" style="background:#059669" onclick="setAccent('#059669','#f0fdf4',this)"></div>
+              <div class="theme-dot" style="background:#db2777" onclick="setAccent('#db2777','#fdf2f8',this)"></div>
+              <div class="theme-dot" style="background:#d97706" onclick="setAccent('#d97706','#fffbeb',this)"></div>
+              <div class="theme-dot" style="background:#7c3aed" onclick="setAccent('#7c3aed','#f5f3ff',this)"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-hdr"><div class="card-title">Notificações</div></div>
+          <div class="setting-row"><div><div class="setting-name">Novos pedidos</div><div class="setting-desc">Notificar ao receber pedidos</div></div><button class="toggle on" onclick="this.classList.toggle('on')"></button></div>
+          <div class="setting-row"><div><div class="setting-name">Alertas de estoque</div><div class="setting-desc">Avisar quando estoque baixo</div></div><button class="toggle on" onclick="this.classList.toggle('on')"></button></div>
+          <div class="setting-row"><div><div class="setting-name">Resumo semanal</div><div class="setting-desc">Relatório por e-mail toda segunda</div></div><button class="toggle" onclick="this.classList.toggle('on')"></button></div>
+          <div class="setting-row"><div><div class="setting-name">Alertas de segurança</div><div class="setting-desc">Novos acessos à conta</div></div><button class="toggle on" onclick="this.classList.toggle('on')"></button></div>
+        </div>
+
+        <div class="card">
+          <div class="card-hdr"><div class="card-title">Conta</div></div>
+          <div class="setting-row"><div><div class="setting-name">Plano atual</div><div class="setting-desc">Business — R$ 199/mês</div></div><button class="btn btn-ghost btn-sm" onclick="toast('Planos em breve!')">Upgrade</button></div>
+          <div class="setting-row"><div><div class="setting-name" style="color:var(--red)">Excluir conta</div><div class="setting-desc">Esta ação não pode ser desfeita</div></div><button class="btn btn-danger btn-sm" onclick="toast('Confirmação necessária')">Excluir</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+</div><!-- #layout -->
 
 <script>
-/* ─── DATA ─────────────────────────────────── */
+/* ── DATA ─────────────────────────────────── */
 const ORDERS = [
-  { id: '10421', cliente: 'Ana Souza',       produto: 'Notebook Pro',     valor: 3499, status: 'Pago',      data: '20/03/25' },
-  { id: '10420', cliente: 'Carlos Lima',     produto: 'Smartphone X12',   valor: 1899, status: 'Enviado',   data: '19/03/25' },
-  { id: '10419', cliente: 'Beatriz Ramos',   produto: 'Cadeira Gamer',    valor: 899,  status: 'Pendente',  data: '18/03/25' },
-  { id: '10418', cliente: 'Diego Farias',    produto: 'Monitor 4K',       valor: 2100, status: 'Pago',      data: '17/03/25' },
-  { id: '10417', cliente: 'Fernanda Costa',  produto: 'Teclado Mec.',     valor: 420,  status: 'Cancelado', data: '16/03/25' },
-  { id: '10416', cliente: 'Gustavo Neto',    produto: 'Headset Pro',      valor: 350,  status: 'Enviado',   data: '15/03/25' },
-  { id: '10415', cliente: 'Helena Vieira',   produto: 'Webcam HD',        valor: 280,  status: 'Pago',      data: '14/03/25' },
-  { id: '10414', cliente: 'Igor Santos',     produto: 'SSD 1TB',          valor: 490,  status: 'Pendente',  data: '13/03/25' },
-  { id: '10413', cliente: 'Júlia Melo',      produto: 'Mouse Sem Fio',    valor: 159,  status: 'Pago',      data: '12/03/25' },
-  { id: '10412', cliente: 'Lucas Andrade',   produto: 'Notebook Ultra',   valor: 4200, status: 'Enviado',   data: '11/03/25' },
+  { id:'10421', cliente:'Ana Souza',      produto:'Notebook Pro',   valor:3499, status:'Pago',      data:'20/03/25' },
+  { id:'10420', cliente:'Carlos Lima',    produto:'Smartphone X12', valor:1899, status:'Enviado',   data:'19/03/25' },
+  { id:'10419', cliente:'Beatriz Ramos',  produto:'Cadeira Gamer',  valor:899,  status:'Pendente',  data:'18/03/25' },
+  { id:'10418', cliente:'Diego Farias',   produto:'Monitor 4K',     valor:2100, status:'Pago',      data:'17/03/25' },
+  { id:'10417', cliente:'Fernanda Costa', produto:'Teclado Mec.',   valor:420,  status:'Cancelado', data:'16/03/25' },
+  { id:'10416', cliente:'Gustavo Neto',   produto:'Headset Pro',    valor:350,  status:'Enviado',   data:'15/03/25' },
+  { id:'10415', cliente:'Helena Vieira',  produto:'Webcam HD',      valor:280,  status:'Pago',      data:'14/03/25' },
+  { id:'10414', cliente:'Igor Santos',    produto:'SSD 1TB',        valor:490,  status:'Pendente',  data:'13/03/25' },
+  { id:'10413', cliente:'Júlia Melo',     produto:'Mouse Sem Fio',  valor:159,  status:'Pago',      data:'12/03/25' },
+  { id:'10412', cliente:'Lucas Andrade',  produto:'Notebook Ultra', valor:4200, status:'Enviado',   data:'11/03/25' },
 ];
 
 const CUSTOMERS = [
-  { nome: 'Ana Souza',      email: 'ana@mail.com',      plano: 'Premium', pedidos: 14, gasto: 18420, status: 'Ativo'    },
-  { nome: 'Carlos Lima',    email: 'carlos@mail.com',   plano: 'Basic',   pedidos: 6,  gasto: 4200,  status: 'Ativo'    },
-  { nome: 'Beatriz Ramos',  email: 'bea@mail.com',      plano: 'Basic',   pedidos: 3,  gasto: 1850,  status: 'Ativo'    },
-  { nome: 'Diego Farias',   email: 'diego@mail.com',    plano: 'Premium', pedidos: 22, gasto: 31200, status: 'Ativo'    },
-  { nome: 'Fernanda Costa', email: 'ferco@mail.com',    plano: 'Basic',   pedidos: 1,  gasto: 420,   status: 'Inativo'  },
-  { nome: 'Gustavo Neto',   email: 'gus@mail.com',      plano: 'Basic',   pedidos: 8,  gasto: 5600,  status: 'Ativo'    },
-  { nome: 'Helena Vieira',  email: 'helen@mail.com',    plano: 'Premium', pedidos: 19, gasto: 22800, status: 'Premium'  },
-  { nome: 'Igor Santos',    email: 'igor@mail.com',     plano: 'Basic',   pedidos: 2,  gasto: 980,   status: 'Inativo'  },
+  { nome:'Ana Souza',      email:'ana@mail.com',    plano:'Premium', pedidos:14, gasto:18420, status:'Ativo'   },
+  { nome:'Carlos Lima',    email:'carlos@mail.com', plano:'Basic',   pedidos:6,  gasto:4200,  status:'Ativo'   },
+  { nome:'Beatriz Ramos',  email:'bea@mail.com',    plano:'Basic',   pedidos:3,  gasto:1850,  status:'Ativo'   },
+  { nome:'Diego Farias',   email:'diego@mail.com',  plano:'Premium', pedidos:22, gasto:31200, status:'Ativo'   },
+  { nome:'Fernanda Costa', email:'ferco@mail.com',  plano:'Basic',   pedidos:1,  gasto:420,   status:'Inativo' },
+  { nome:'Gustavo Neto',   email:'gus@mail.com',    plano:'Basic',   pedidos:8,  gasto:5600,  status:'Ativo'   },
+  { nome:'Helena Vieira',  email:'helen@mail.com',  plano:'Premium', pedidos:19, gasto:22800, status:'Premium' },
+  { nome:'Igor Santos',    email:'igor@mail.com',   plano:'Basic',   pedidos:2,  gasto:980,   status:'Inativo' },
 ];
 
 const PRODUCTS = [
-  { nome: 'Notebook Pro',    cat: 'Eletrônicos', preco: 3499, estoque: 3,  vendidos: 47, status: 'Baixo'    },
-  { nome: 'Smartphone X12',  cat: 'Eletrônicos', preco: 1899, estoque: 28, vendidos: 132, status: 'Ativo'  },
-  { nome: 'Cadeira Gamer',   cat: 'Casa',        preco: 899,  estoque: 14, vendidos: 58, status: 'Ativo'   },
-  { nome: 'Monitor 4K',      cat: 'Eletrônicos', preco: 2100, estoque: 7,  vendidos: 39, status: 'Ativo'   },
-  { nome: 'Teclado Mec.',    cat: 'Eletrônicos', preco: 420,  estoque: 0,  vendidos: 84, status: 'Esgotado'},
-  { nome: 'Headset Pro',     cat: 'Eletrônicos', preco: 350,  estoque: 21, vendidos: 103, status: 'Ativo'  },
-  { nome: 'Webcam HD',       cat: 'Eletrônicos', preco: 280,  estoque: 45, vendidos: 71, status: 'Ativo'   },
-  { nome: 'SSD 1TB',         cat: 'Eletrônicos', preco: 490,  estoque: 11, vendidos: 220, status: 'Ativo'  },
+  { nome:'Notebook Pro',   cat:'Eletrônicos', preco:3499, estoque:3,  vendidos:47,  status:'Baixo'    },
+  { nome:'Smartphone X12', cat:'Eletrônicos', preco:1899, estoque:28, vendidos:132, status:'Ativo'    },
+  { nome:'Cadeira Gamer',  cat:'Casa',        preco:899,  estoque:14, vendidos:58,  status:'Ativo'    },
+  { nome:'Monitor 4K',     cat:'Eletrônicos', preco:2100, estoque:7,  vendidos:39,  status:'Ativo'    },
+  { nome:'Teclado Mec.',   cat:'Eletrônicos', preco:420,  estoque:0,  vendidos:84,  status:'Esgotado' },
+  { nome:'Headset Pro',    cat:'Eletrônicos', preco:350,  estoque:21, vendidos:103, status:'Ativo'    },
+  { nome:'Webcam HD',      cat:'Eletrônicos', preco:280,  estoque:45, vendidos:71,  status:'Ativo'    },
+  { nome:'SSD 1TB',        cat:'Eletrônicos', preco:490,  estoque:11, vendidos:220, status:'Ativo'    },
 ];
 
-/* ─── BADGE ─────────────────────────────────── */
-function badge(status) {
-  const map = {
-    'Pago':      'green', 'Ativo':    'green',  'Premium': 'blue',
-    'Enviado':   'blue',  'Pendente': 'amber',
-    'Cancelado': 'red',   'Inativo':  'red',
-    'Baixo':     'amber', 'Esgotado': 'red',
-  };
-  return `<span class="badge badge-${map[status]||'blue'}">${status}</span>`;
-}
+/* ── BADGE ───────────────────────────────── */
+const BADGE_MAP = { Pago:'green', Ativo:'green', Premium:'blue', Enviado:'blue', Pendente:'amber', Cancelado:'red', Inativo:'red', Baixo:'amber', Esgotado:'red' };
+const badge = s => `<span class="badge badge-${BADGE_MAP[s]||'blue'}">${s}</span>`;
+const brl   = n => `R$ ${n.toLocaleString('pt-BR')}`;
 
-/* ─── RENDER TABLES ──────────────────────────── */
-let orderFilter = 'todos', orderSort = { key: 'id', asc: false };
+/* ── RENDERS ─────────────────────────────── */
+let oFilter = 'todos', oSort = { key:'id', asc:false };
 
 function renderOrders() {
-  const tbody = document.getElementById('orders-body');
-  let data = [...ORDERS];
-  if (orderFilter !== 'todos') data = data.filter(o => o.status === orderFilter);
-  if (orderSort.key === 'valor') data.sort((a,b) => orderSort.asc ? a.valor - b.valor : b.valor - a.valor);
-  else data.sort((a,b) => orderSort.asc ? a.id.localeCompare(b.id) : b.id.localeCompare(a.id));
+  let d = [...ORDERS];
+  if (oFilter !== 'todos') d = d.filter(o => o.status === oFilter);
+  d.sort((a,b) => oSort.key === 'valor'
+    ? (oSort.asc ? a.valor - b.valor : b.valor - a.valor)
+    : (oSort.asc ? a.id.localeCompare(b.id) : b.id.localeCompare(a.id)));
 
-  tbody.innerHTML = data.map(o => `
+  document.getElementById('orders-body').innerHTML = d.map(o => `
     <tr>
-      <td><code style="font-family:var(--mono);font-size:12px;background:var(--acc-subtle);padding:2px 7px;border-radius:5px">#${o.id}</code></td>
+      <td><span class="mono">#${o.id}</span></td>
       <td>${o.cliente}</td>
-      <td>${o.produto}</td>
-      <td style="font-family:var(--mono)">R$ ${o.valor.toLocaleString('pt-BR')}</td>
+      <td style="color:var(--sub)">${o.produto}</td>
+      <td style="font-variant-numeric:tabular-nums">${brl(o.valor)}</td>
       <td>${badge(o.status)}</td>
-      <td style="color:var(--muted)">${o.data}</td>
-      <td><button class="btn btn-ghost" style="padding:4px 10px;font-size:12px" onclick="toast('Pedido #${o.id} aberto!')">Ver</button></td>
-    </tr>
-  `).join('');
+      <td style="color:var(--sub)">${o.data}</td>
+      <td><button class="btn btn-ghost btn-sm" onclick="toast('Pedido #${o.id} aberto!')">Ver</button></td>
+    </tr>`).join('');
 }
 
 function renderRecentOrders() {
-  const tbody = document.getElementById('recent-orders-body');
-  tbody.innerHTML = ORDERS.slice(0,5).map(o => `
+  document.getElementById('recent-orders-body').innerHTML = ORDERS.slice(0,5).map(o => `
     <tr>
-      <td><code style="font-family:var(--mono);font-size:12px;background:var(--acc-subtle);padding:2px 7px;border-radius:5px">#${o.id}</code></td>
+      <td><span class="mono">#${o.id}</span></td>
       <td>${o.cliente}</td>
-      <td style="font-family:var(--mono)">R$ ${o.valor.toLocaleString('pt-BR')}</td>
+      <td style="font-variant-numeric:tabular-nums">${brl(o.valor)}</td>
       <td>${badge(o.status)}</td>
-    </tr>
-  `).join('');
+    </tr>`).join('');
 }
 
-let customerFilter = 'todos';
+let cFilter = 'todos';
 function renderCustomers() {
-  const tbody = document.getElementById('customers-body');
-  let data = [...CUSTOMERS];
-  if (customerFilter !== 'todos') data = data.filter(c => c.status === customerFilter);
-  tbody.innerHTML = data.map(c => `
-    <tr class="customer-row" onclick="toast('${c.nome} — detalhes em breve!')">
+  let d = [...CUSTOMERS];
+  if (cFilter !== 'todos') d = d.filter(c => c.status === cFilter);
+  document.getElementById('customers-body').innerHTML = d.map(c => `
+    <tr style="cursor:pointer" onclick="toast('${c.nome} — detalhes em breve!')">
       <td style="font-weight:600">${c.nome}</td>
-      <td style="color:var(--muted)">${c.email}</td>
+      <td style="color:var(--sub)">${c.email}</td>
       <td>${c.plano}</td>
-      <td style="font-family:var(--mono)">${c.pedidos}</td>
-      <td style="font-family:var(--mono)">R$ ${c.gasto.toLocaleString('pt-BR')}</td>
+      <td style="font-variant-numeric:tabular-nums">${c.pedidos}</td>
+      <td style="font-variant-numeric:tabular-nums">${brl(c.gasto)}</td>
       <td>${badge(c.status)}</td>
-    </tr>
-  `).join('');
+    </tr>`).join('');
 }
 
 function renderProducts() {
-  const tbody = document.getElementById('products-body');
-  tbody.innerHTML = PRODUCTS.map(p => `
+  document.getElementById('products-body').innerHTML = PRODUCTS.map(p => `
     <tr>
       <td style="font-weight:600">${p.nome}</td>
-      <td style="color:var(--muted)">${p.cat}</td>
-      <td style="font-family:var(--mono)">R$ ${p.preco.toLocaleString('pt-BR')}</td>
-      <td style="font-family:var(--mono);${p.estoque <= 5 ? 'color:var(--red)' : ''}">${p.estoque}</td>
-      <td style="font-family:var(--mono)">${p.vendidos}</td>
+      <td style="color:var(--sub)">${p.cat}</td>
+      <td style="font-variant-numeric:tabular-nums">${brl(p.preco)}</td>
+      <td style="font-variant-numeric:tabular-nums;${p.estoque <= 5 ? 'color:var(--red)' : ''}">${p.estoque}</td>
+      <td style="font-variant-numeric:tabular-nums">${p.vendidos}</td>
       <td>${badge(p.status)}</td>
-    </tr>
-  `).join('');
+    </tr>`).join('');
 }
 
 function filterOrders(f, el) {
-  orderFilter = f;
+  oFilter = f;
   document.querySelectorAll('#page-orders .filter-btn').forEach(b => b.classList.remove('active'));
   el.classList.add('active');
   renderOrders();
 }
-
 function sortOrders(key) {
-  if (orderSort.key === key) orderSort.asc = !orderSort.asc;
-  else { orderSort.key = key; orderSort.asc = false; }
+  oSort = oSort.key === key ? { key, asc: !oSort.asc } : { key, asc: false };
   renderOrders();
 }
-
 function filterCustomers(f, el) {
-  customerFilter = f;
+  cFilter = f;
   document.querySelectorAll('#page-customers .filter-btn').forEach(b => b.classList.remove('active'));
   el.classList.add('active');
   renderCustomers();
 }
 
-/* ─── CHARTS ─────────────────────────────────── */
-let lineChart, donutChart, barChart;
-const isDark = () => document.body.getAttribute('data-theme') === 'dark';
+/* ── CHARTS ──────────────────────────────── */
+let charts = {};
 
-function chartColors() {
-  const style = getComputedStyle(document.body);
+function getColors() {
+  const s = getComputedStyle(document.documentElement);
   return {
-    text:   style.getPropertyValue('--text').trim(),
-    muted:  style.getPropertyValue('--muted').trim(),
-    border: style.getPropertyValue('--border').trim(),
-    surface: style.getPropertyValue('--surface').trim(),
+    text:   s.getPropertyValue('--text').trim(),
+    sub:    s.getPropertyValue('--sub').trim(),
+    border: s.getPropertyValue('--border').trim(),
+    accent: s.getPropertyValue('--accent').trim(),
   };
 }
 
 function initCharts() {
-  const c = chartColors();
-  Chart.defaults.font.family = 'DM Sans, sans-serif';
-  Chart.defaults.font.size = 12;
+  const c = getColors();
+  Chart.defaults.font.family = 'Geist, sans-serif';
+  Chart.defaults.font.size   = 12;
 
-  // LINE
-  const lineCtx = document.getElementById('lineChart');
-  lineChart = new Chart(lineCtx, {
+  charts.line = new Chart('lineChart', {
     type: 'line',
     data: {
       labels: ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago'],
       datasets: [
-        {
-          label: 'Vendas',
-          data: [42000, 38000, 55000, 48000, 62000, 58000, 71000, 84320],
-          borderColor: c.text,
-          backgroundColor: isDark() ? 'rgba(232,232,240,0.05)' : 'rgba(26,26,46,0.04)',
-          borderWidth: 2, pointRadius: 3, fill: true, tension: 0.4,
-        },
-        {
-          label: 'Lucros',
-          data: [18000, 15000, 24000, 20000, 28000, 25000, 31000, 38000],
-          borderColor: c.muted,
-          backgroundColor: 'transparent',
-          borderWidth: 1.5, pointRadius: 2, tension: 0.4, borderDash: [4,3],
-        }
+        { label:'Vendas', data:[42000,38000,55000,48000,62000,58000,71000,84320],
+          borderColor: c.accent, backgroundColor: c.accent+'18',
+          borderWidth:2, pointRadius:3, fill:true, tension:.4 },
+        { label:'Lucros', data:[18000,15000,24000,20000,28000,25000,31000,38000],
+          borderColor: c.sub, backgroundColor:'transparent',
+          borderWidth:1.5, pointRadius:2, tension:.4, borderDash:[4,3] }
       ]
     },
-    options: {
-      responsive: true, maintainAspectRatio: true,
-      plugins: { legend: { labels: { color: c.muted, boxWidth: 12, usePointStyle: true } } },
-      scales: {
-        x: { grid: { color: c.border }, ticks: { color: c.muted } },
-        y: { grid: { color: c.border }, ticks: { color: c.muted, callback: v => 'R$'+v/1000+'k' } },
-      }
-    }
+    options: chartOpts(c, v => 'R$'+v/1000+'k'),
   });
 
-  // DONUT
-  const donutCtx = document.getElementById('donutChart');
-  donutChart = new Chart(donutCtx, {
+  charts.donut = new Chart('donutChart', {
     type: 'doughnut',
     data: {
       labels: ['Eletrônicos','Roupas','Casa','Outros'],
-      datasets: [{ data: [40,25,20,15], backgroundColor: [c.text, c.muted+'99', c.muted+'55', c.border], borderWidth: 0, hoverOffset: 4 }]
+      datasets: [{ data:[40,25,20,15], backgroundColor:[c.accent, c.sub+'99', c.sub+'55', c.border], borderWidth:0, hoverOffset:4 }]
     },
-    options: {
-      responsive: true, maintainAspectRatio: true, cutout: '70%',
-      plugins: { legend: { display: false } }
-    }
+    options: { responsive:true, maintainAspectRatio:true, cutout:'70%', plugins:{ legend:{ display:false } } }
   });
 
-  // BAR
-  const barCtx = document.getElementById('barChart');
-  barChart = new Chart(barCtx, {
+  charts.bar = new Chart('barChart', {
     type: 'bar',
     data: {
       labels: ['Q1','Q2','Q3','Q4'],
       datasets: [
-        { label: 'Meta',      data: [120000,150000,140000,180000], backgroundColor: c.border,    borderRadius: 6 },
-        { label: 'Realizado', data: [108000,162000,134000,195000], backgroundColor: c.text,      borderRadius: 6 },
+        { label:'Meta',      data:[120000,150000,140000,180000], backgroundColor: c.border,  borderRadius:6 },
+        { label:'Realizado', data:[108000,162000,134000,195000], backgroundColor: c.accent,  borderRadius:6 },
       ]
     },
-    options: {
-      responsive: true, maintainAspectRatio: true,
-      plugins: { legend: { labels: { color: c.muted, boxWidth: 10, usePointStyle: true } } },
-      scales: {
-        x: { grid: { display: false }, ticks: { color: c.muted } },
-        y: { grid: { color: c.border }, ticks: { color: c.muted, callback: v => 'R$'+v/1000+'k' } },
-      }
-    }
+    options: chartOpts(c, v => 'R$'+v/1000+'k'),
   });
 }
 
-function updateCharts() {
-  const c = chartColors();
-  [lineChart, donutChart, barChart].forEach(ch => {
+function chartOpts(c, yFmt) {
+  return {
+    responsive:true, maintainAspectRatio:true,
+    plugins: { legend:{ labels:{ color:c.sub, boxWidth:10, usePointStyle:true } } },
+    scales: {
+      x: { grid:{ color:c.border }, ticks:{ color:c.sub } },
+      y: { grid:{ color:c.border }, ticks:{ color:c.sub, callback: yFmt } }
+    }
+  };
+}
+
+function refreshCharts() {
+  const c = getColors();
+  Object.values(charts).forEach(ch => {
     if (!ch) return;
-    ch.options.scales && Object.values(ch.options.scales).forEach(s => {
-      if (s.grid) s.grid.color = c.border;
-      if (s.ticks) s.ticks.color = c.muted;
-    });
-    if (ch.options.plugins?.legend) ch.options.plugins.legend.labels.color = c.muted;
-    if (ch.data.datasets[0].label === 'Vendas') {
-      ch.data.datasets[0].borderColor = c.text;
-      ch.data.datasets[0].backgroundColor = isDark() ? 'rgba(232,232,240,0.05)' : 'rgba(26,26,46,0.04)';
-      ch.data.datasets[1].borderColor = c.muted;
+    if (ch.options.scales) {
+      Object.values(ch.options.scales).forEach(s => {
+        if (s.grid)  s.grid.color  = c.border;
+        if (s.ticks) s.ticks.color = c.sub;
+      });
     }
-    if (ch.data.datasets[0].label === 'Meta') {
-      ch.data.datasets[0].backgroundColor = c.border;
-      ch.data.datasets[1].backgroundColor = c.text;
+    if (ch.options.plugins?.legend) ch.options.plugins.legend.labels.color = c.sub;
+    const ds0 = ch.data.datasets[0];
+    if (ds0.label === 'Vendas') {
+      ds0.borderColor = c.accent; ds0.backgroundColor = c.accent+'18';
+      ch.data.datasets[1].borderColor = c.sub;
     }
-    if (ch.data.datasets[0].label === 'Eletrônicos') {
-      ch.data.datasets[0].backgroundColor = [c.text, c.muted+'99', c.muted+'55', c.border];
+    if (ds0.label === 'Meta') {
+      ds0.backgroundColor = c.border; ch.data.datasets[1].backgroundColor = c.accent;
+    }
+    if (ds0.label === 'Eletrônicos') {
+      ds0.backgroundColor = [c.accent, c.sub+'99', c.sub+'55', c.border];
     }
     ch.update('none');
   });
 }
 
-/* ─── NAVIGATION ─────────────────────────────── */
-const PAGE_LABELS = {
-  dashboard: 'Visão Geral', analytics: 'Analytics', orders: 'Pedidos',
-  customers: 'Clientes', products: 'Produtos', notifications: 'Notificações', settings: 'Configurações'
-};
+/* ── NAVIGATION ──────────────────────────── */
+const PAGE_TITLES = { dashboard:'Visão Geral', analytics:'Analytics', orders:'Pedidos', customers:'Clientes', products:'Produtos', notifications:'Notificações', settings:'Configurações' };
 
-function navigate(id, el) {
+function nav(id, el) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  document.getElementById('page-' + id).classList.add('active');
+  document.getElementById('page-'+id).classList.add('active');
   if (el) el.classList.add('active');
-  document.getElementById('page-label').textContent = PAGE_LABELS[id] || '';
+  document.getElementById('page-label').textContent = PAGE_TITLES[id] || '';
   closeSidebar();
 }
 
-/* ─── SIDEBAR ─────────────────────────────────── */
+/* ── SIDEBAR ─────────────────────────────── */
 function toggleSidebar() {
   document.getElementById('sidebar').classList.toggle('open');
   document.getElementById('overlay').classList.toggle('show');
@@ -1493,52 +1144,49 @@ function closeSidebar() {
   document.getElementById('overlay').classList.remove('show');
 }
 
-/* ─── THEME ──────────────────────────────────── */
+/* ── THEME ───────────────────────────────── */
 let dark = false;
 function toggleTheme() {
   dark = !dark;
   document.body.setAttribute('data-theme', dark ? 'dark' : 'light');
   document.getElementById('theme-btn').textContent = dark ? '☀️' : '🌙';
-  const dt = document.getElementById('dark-toggle');
-  if (dt) dt.classList.toggle('on', dark);
-  updateCharts();
+  document.getElementById('dark-toggle').classList.toggle('on', dark);
+  refreshCharts();
 }
 
-function setAccent(color, el) {
+function setAccent(color, dimColor, el) {
   document.querySelectorAll('.theme-dot').forEach(d => d.classList.remove('active'));
   el.classList.add('active');
-  const light = color + '12';
   document.documentElement.style.setProperty('--accent', color);
-  document.querySelector('[data-theme]').style.setProperty('--acc-subtle', light);
+  document.documentElement.style.setProperty('--acc-dim', dimColor);
+  refreshCharts();
   toast('Cor aplicada!');
 }
 
-/* ─── TOAST ──────────────────────────────────── */
+/* ── NOTIFICATIONS ───────────────────────── */
+function markAllRead() {
+  document.querySelectorAll('.notif-item.unread').forEach(n => n.classList.remove('unread'));
+  document.querySelectorAll('.notif-dot').forEach(d => d.remove());
+  document.getElementById('bell-dot')?.remove();
+  document.querySelector('[onclick*="notifications"] .nav-badge')?.remove();
+  document.getElementById('unread-count').textContent = 'Nenhuma nova';
+  toast('Todas marcadas como lidas');
+}
+
+/* ── TOAST ───────────────────────────────── */
 function toast(msg) {
   const el = document.createElement('div');
   el.className = 'toast';
   el.textContent = msg;
-  document.getElementById('toast-container').appendChild(el);
-  setTimeout(() => el.remove(), 2900);
+  document.getElementById('toasts').appendChild(el);
+  setTimeout(() => el.remove(), 2800);
 }
 
-/* ─── SEARCH ──────────────────────────────────── */
-function handleSearch(val) {
-  if (val.length > 1) toast('Buscando por: "' + val + '"');
+function handleSearch(v) {
+  if (v.length > 1) toast('Buscando: "' + v + '"');
 }
 
-/* ─── NOTIFICATIONS ──────────────────────────── */
-function markAllRead() {
-  document.querySelectorAll('.notif-item.unread').forEach(n => n.classList.remove('unread'));
-  document.querySelectorAll('.notif-unread-dot').forEach(d => d.remove());
-  document.querySelector('.icon-btn .dot')?.remove();
-  document.querySelector('[onclick*="notifications"] .nav-badge')?.remove();
-  toast('Todas marcadas como lidas');
-}
-
-function openNewCustomer() { toast('Formulário de novo cliente em desenvolvimento'); }
-
-/* ─── INIT ───────────────────────────────────── */
+/* ── INIT ────────────────────────────────── */
 document.addEventListener('DOMContentLoaded', () => {
   renderRecentOrders();
   renderOrders();
