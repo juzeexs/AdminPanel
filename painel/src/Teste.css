@@ -1,0 +1,102 @@
+/* ══ BASE ══ */
+.dash { padding: 1.5rem; max-width: 1100px; margin: 0 auto; width: 100%; }
+
+/* ══ HEADER ══ */
+.dash-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 1.5rem; flex-wrap: wrap; }
+.dash-heading { flex: 1; min-width: 0; }
+.dash-title { font-size: 20px; font-weight: 500; color: #1a1a18; margin: 0; }
+.dash-sub { font-size: 13px; color: #888780; margin-top: 2px; }
+.dash-controls { display: flex; align-items: center; gap: 8px; flex-shrink: 0; flex-wrap: wrap; }
+.badge-live { font-size: 11px; background: #EAF3DE; color: #3B6D11; padding: 4px 10px; border-radius: 8px; font-weight: 500; white-space: nowrap; }
+.period-btns { display: flex; gap: 4px; }
+.period-btn { font-size: 12px; padding: 5px 12px; border: 0.5px solid #ddd; border-radius: 8px; background: transparent; color: #888780; cursor: pointer; font-weight: 400; transition: all 0.15s; white-space: nowrap; }
+.period-btn.active { border-color: #aaa; background: #F5F5F2; color: #1a1a18; font-weight: 500; }
+
+/* ══ MÉTRICAS ══ */
+.metrics-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 1.5rem; }
+.metric-card { background: #F5F5F2; border-radius: 8px; padding: 1rem 1.1rem; min-width: 0; }
+.metric-label { font-size: 12px; color: #888780; margin-bottom: 6px; }
+.metric-value { font-size: 22px; font-weight: 500; color: #1a1a18; }
+.metric-delta { font-size: 11px; margin-top: 4px; line-height: 1.4; }
+.metric-delta.up   { color: #3B6D11; }
+.metric-delta.down { color: #A32D2D; }
+
+/* ══ CARDS ══ */
+.card { background: #fff; border: 0.5px solid #e5e4de; border-radius: 12px; padding: 1.1rem; min-width: 0; }
+.card-title { font-size: 13px; font-weight: 500; color: #1a1a18; margin-bottom: 1rem; }
+
+/* ══ GRÁFICOS ══ */
+.charts-row { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 12px; margin-bottom: 12px; }
+.chart-wrap { position: relative; width: 100%; height: 200px; }
+.chart-legend { display: flex; gap: 12px; margin-bottom: 10px; font-size: 12px; color: #888780; flex-wrap: wrap; }
+.donut-legend { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; font-size: 12px; color: #888780; }
+.legend-item { display: flex; align-items: center; gap: 5px; }
+.legend-dot { width: 9px; height: 9px; border-radius: 2px; display: inline-block; flex-shrink: 0; }
+
+/* ══ TABELA + CANAIS ══ */
+.bottom-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; }
+.table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.orders-table { width: 100%; font-size: 13px; border-collapse: collapse; min-width: 280px; }
+.th-left  { text-align: left;  font-size: 11px; font-weight: 500; color: #888780; text-transform: uppercase; letter-spacing: 0.04em; padding-bottom: 8px; white-space: nowrap; }
+.th-right { text-align: right; font-size: 11px; font-weight: 500; color: #888780; text-transform: uppercase; letter-spacing: 0.04em; padding-bottom: 8px; white-space: nowrap; }
+.td { padding: 8px 0; border-top: 0.5px solid #e5e4de; color: #1a1a18; }
+.td-right { text-align: right; }
+.status-badge { font-size: 11px; padding: 2px 8px; border-radius: 8px; font-weight: 500; white-space: nowrap; }
+.status-ok   { background: #EAF3DE; color: #3B6D11; }
+.status-warn { background: #FAEEDA; color: #854F0B; }
+.status-info { background: #E6F1FB; color: #185FA5; }
+.channel-row { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+.channel-name { font-size: 13px; color: #1a1a18; width: 80px; flex-shrink: 0; }
+.bar-bg { flex: 1; height: 6px; background: #F5F5F2; border-radius: 4px; overflow: hidden; min-width: 0; }
+.bar-fill { height: 100%; border-radius: 4px; }
+.channel-pct { font-size: 12px; color: #888780; width: 32px; text-align: right; flex-shrink: 0; }
+
+/* ══ TABLET ≤ 900px ══ */
+@media (max-width: 900px) {
+  .metrics-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .charts-row   { grid-template-columns: 1fr; }
+  .bottom-row   { grid-template-columns: 1fr; }
+}
+
+/* ══ TABLET PEQUENO ≤ 640px ══ */
+@media (max-width: 640px) {
+  .dash { padding: 1rem; }
+  .dash-title { font-size: 17px; }
+  .metrics-grid { gap: 8px; }
+  .metric-card { padding: 0.85rem 0.9rem; }
+  .metric-value { font-size: 18px; }
+  .metric-label { font-size: 11px; }
+  .chart-wrap { height: 180px; }
+  .card { padding: 0.9rem; }
+}
+
+/* ══ CELULAR ≤ 480px ══ */
+@media (max-width: 480px) {
+  .dash { padding: 0.75rem; }
+  .dash-header { gap: 8px; }
+  .dash-title { font-size: 16px; }
+  .dash-controls { width: 100%; justify-content: space-between; }
+  .metrics-grid { grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 1rem; }
+  .metric-value { font-size: 17px; }
+  .metric-delta { font-size: 10px; }
+  .period-btn { font-size: 11px; padding: 4px 10px; }
+  .chart-wrap { height: 160px; }
+  .charts-row { gap: 8px; margin-bottom: 8px; }
+  .bottom-row { gap: 8px; }
+  .card { padding: 0.75rem; }
+  .card-title { font-size: 12px; margin-bottom: 0.75rem; }
+  .orders-table { font-size: 12px; }
+  .th-left, .th-right { font-size: 10px; }
+  .channel-name { width: 60px; font-size: 12px; }
+  .channel-pct { font-size: 11px; width: 28px; }
+}
+
+/* ══ CELULAR PEQUENO ≤ 360px ══ */
+@media (max-width: 360px) {
+  .dash { padding: 0.6rem; }
+  .metrics-grid { grid-template-columns: 1fr; }
+  .metric-value { font-size: 20px; }
+  .dash-title { font-size: 15px; }
+  .chart-wrap { height: 140px; }
+  .badge-live { display: none; }
+}
